@@ -4,6 +4,8 @@
 #include <ESP32_Gyro.h>
 #include <ESP32_Check.h>
 #include <ESP32_SDcard.h>
+#include <ESP32_MAX30102.h>
+
 
 
 
@@ -19,6 +21,9 @@ ESP32_Display ESP32_display;
 ESP32_Gyro ESP32_gyro;
 ESP32_Time ESP32_time;
 ESP32_SDcard ESP32_sdcard;
+ESP32_MAX30102 ESP32_max;
+
+String BPM, IR;
 
 
 
@@ -29,6 +34,7 @@ void setup () {
   
   Serial.begin(115200);
   ESP32_sdcard._init_();
+  ESP32_max._init_();
 
   // ESP32_display._init_();
   // ESP32_time._init_();
@@ -60,22 +66,25 @@ void setup () {
 }
 
 void loop () {
+        ESP32_max.GetDataFromMAX30102();
+        // ESP32_sdcard.listDir(  "/", 0);
+        // ESP32_sdcard.createDir(  "/mydir");
+        // ESP32_sdcard.listDir(  "/", 0);
 
-        ESP32_sdcard.listDir(  "/", 0);
-        ESP32_sdcard.createDir(  "/mydir");
-        ESP32_sdcard.listDir(  "/", 0);
+        // ESP32_sdcard.listDir(  "/", 2);
+        
+        BPM = "BPM = " +  ESP32_max.GetAvgBPM() + " ";
+        IR = "IR= " + ESP32_max.GetIR() + "\n ";
 
-        ESP32_sdcard.listDir(  "/", 2);
-        ESP32_sdcard.writeFile(  "/hello.txt", "Hello ");
-        ESP32_sdcard.appendFile(  "/hello.txt", "World!\n");
-        ESP32_sdcard.readFile(  "/hello.txt");
-
-
-        Serial.printf("Total space: %lluMB\n", SD.totalBytes() / (1024 * 1024));
-        Serial.printf("Used space: %lluMB\n", SD.usedBytes() / (1024 * 1024));
+        // ESP32_sdcard.appendFile(  "/Beats.txt", BPM.c_str());
+        // ESP32_sdcard.appendFile(  "/Beats.txt", IR.c_str());
+        
+      Serial.print(BPM); Serial.print(IR);
 
   
-  delay(4000);
+
+  
+ 
 
 
 
