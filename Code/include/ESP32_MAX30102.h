@@ -20,7 +20,9 @@ private:
     long delta;
 
 public:
-
+    ESP32_MAX30102(){
+        return;
+    }
     void _init_(){
         rates = new byte[RATE_SIZE];
 
@@ -39,28 +41,25 @@ public:
     }
 
     void GetDataFromMAX30102(){
-        irValue = particleSensor.getIR();
-
-        if (checkForBeat(irValue) == true)
-        {
-        //We sensed a beat!
-        delta = millis() - lastBeat;
-        lastBeat = millis();
-
-        beatsPerMinute = 60 / (delta / 1000.0);
-
-        if (beatsPerMinute < 255 && beatsPerMinute > 20)
-        {
-        rates[rateSpot++] = (byte)beatsPerMinute; //Store this reading in the array
-        rateSpot %= RATE_SIZE; //Wrap variable
-
-        //Take average of readings
-        beatAvg = 0;
-        for (byte x = 0 ; x < RATE_SIZE ; x++)
-        beatAvg += rates[x];
-        beatAvg /= RATE_SIZE;
-        
-        }
+        irValue = particleSensor.getIR(); 
+        //Serial.print("IR Value  "); Serial.print(irValue);  
+        //Serial.println("   Get data function");            //  Считываем значение отражённого ИК-светодиода (отвечающего за пульс) и
+        if (checkForBeat(irValue) == true) {
+            //Serial.println("Start if");
+            //Serial.print(beatAvg);
+            //Serial.println("Data fun");                  //  если пульс был зафиксирован, то
+            delta = millis() - lastBeat;                   //  находим дельту по времени между ударами
+            lastBeat = millis();                                //  Обновляем счётчик
+            beatsPerMinute = 60 / (delta / 1000.0);             //  Вычисляем количество ударов в минуту
+            if (beatsPerMinute < 255 && beatsPerMinute > 20) {  //  Если количество ударов в минуту находится в промежутке между 20 и 255, то
+            rates[rateSpot++] = (byte)beatsPerMinute;         //  записываем это значение в массив значений ЧСС
+            rateSpot %= RATE_SIZE;                            //  Задаём порядковый номер значения в массиве, возвращая остаток от деления и присваивая его переменной rateSpot
+            beatAvg = 0;                                      //  Обнуляем переменную и
+            for (byte x = 0 ; x < RATE_SIZE ; x++) {          //  в цикле выполняем усреднение значений (чем больше RATE_SIZE, тем сильнее усреднение)
+                beatAvg += rates[x];                            //  путём сложения всех элементов массива
+            }
+            beatAvg /= RATE_SIZE;                             //  а затем деления всей суммы на коэффициент усреднения (на общее количество элементов в массиве)
+            }
         }
     }
 
@@ -76,6 +75,20 @@ public:
 
     String GetAvgBPM(){
         return String(beatAvg);
+    }
+
+    byte bGetIR(){
+        // GetDataFromMAX30102();
+        return byte(irValue);
+    }
+
+    byte bGetBPM(){
+        // GetDataFromMAX30102();
+        return byte(beatsPerMinute);
+    }
+
+    byte bGetAvgBPM(){
+        return byte(beatAvg);
     }
 
 };

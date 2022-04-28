@@ -58,6 +58,35 @@ public:
 
     }
 
+    int GetDay(){
+        DateTime now = rtc.now();
+        return now.day();
+    }
+
+    int GetMonth(){
+        DateTime now = rtc.now();
+        return now.month();
+    }
+
+    int GetYear(){
+        DateTime now = rtc.now();
+        return now.year();
+    }
+
+    int GetHour(){
+        DateTime now = rtc.now();
+        return now.hour();
+    }
+
+    int GetMin(){
+        DateTime now = rtc.now();
+        return now.minute();
+    }
+
+    int GetSec(){
+        DateTime now = rtc.now();
+        return now.second();
+    }
 
     // Return String of Time type of 
     // | specifier | output                                                 |

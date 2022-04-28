@@ -35,6 +35,35 @@ public:
     }
 
     // Print All Data in SerialPort
+    float Getwx(){
+        mpu.getEvent(&a, &g, &temp);
+        return a.acceleration.x;
+    }
+
+    float Getwy(){
+        mpu.getEvent(&a, &g, &temp);
+        return a.acceleration.y;
+    }
+
+    float Getwz(){
+        mpu.getEvent(&a, &g, &temp);
+        return a.acceleration.z;
+    }
+
+    float Getx(){
+        mpu.getEvent(&a, &g, &temp);
+        return g.gyro.x;
+    }
+
+    float Gety(){
+        mpu.getEvent(&a, &g, &temp);
+        return g.gyro.y;
+    }
+
+    float Getz(){
+        mpu.getEvent(&a, &g, &temp);
+        return g.gyro.z;
+    }
 
     void SerialPrint(){
         mpu.getEvent(&a, &g, &temp);

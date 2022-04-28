@@ -5,7 +5,11 @@
 #include <SD.h>
 #include <FS.h>
 
-#define SD_CARD_PIN 4
+#define SD_CARD_PIN 5
+// CS    5
+// MOSI 23
+// CLK  18
+// MISO 19
 
 class ESP32_SDcard{
 private:
@@ -84,6 +88,8 @@ public:
             Serial.println("Failed to open file for reading");
             return;
         }
+
+        file.read();
 
         Serial.print("Read from file: ");
         while(file.available()){
