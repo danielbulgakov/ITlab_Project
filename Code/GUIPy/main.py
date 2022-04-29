@@ -165,8 +165,9 @@ class SignUpPage(tk.Frame):
 
         
     def check_register_data(self):
-        fname = str(self.username.get())
-        password = str(self.password.get())
+        fname = str(self.username.get()).strip()
+        password = str(self.password.get()).strip()
+        
         
 
             
@@ -174,9 +175,12 @@ class SignUpPage(tk.Frame):
             messagebox.showwarning(title='ошибка', message='неверно указаны данные')
             
         else :
-            self.add_register_data()
-            messagebox.showinfo(title='Успешно!', message="Аккаунт создан успешно")
-            self.ctrl.show_frame(StartPage)
+            if (self.is_overwrite_data(fname)):
+                messagebox.showwarning(title='ошибка', message='логин уже существует')
+            else :
+                self.add_register_data()
+                messagebox.showinfo(title='Успешно!', message="Аккаунт создан успешно")
+                self.ctrl.show_frame(StartPage)
             
         
         self.username.set("")
@@ -186,6 +190,18 @@ class SignUpPage(tk.Frame):
         data = open("data.txt", "a")
         data.write(self.username.get() + "|" + self.password.get() + "\n")
         data.close()
+        
+    def is_overwrite_data(self, name):
+        data = open("data.txt", "r")
+        name = name + '|'
+        if name in data.read():
+           data.close()
+           return True
+        else :
+            data.close()
+        return False 
+        
+        
         
         
             
