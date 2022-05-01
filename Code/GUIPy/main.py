@@ -2,11 +2,12 @@ from email import message
 import tkinter as tk
 from tkinter import PhotoImage, messagebox
 
+from setuptools import Command
+
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-from setuptools import Command
 
 
 LARGE_FONT= ("Verdana", 12)
@@ -32,7 +33,7 @@ class FramesHandler(tk.Tk):
         height = 900
 
         self.geometry(str(width) + "x" + str(height))
-        self.minsize(900, 900)
+        self.minsize(1200, 900)
         self.title("ESPушка")
     
         # canvas = tk.Canvas(width, height)
@@ -42,7 +43,7 @@ class FramesHandler(tk.Tk):
         
         self.frames = {}
 
-        for F in (StartPage, SignInPage, SignUpPage):
+        for F in (StartPage, SignInPage, SignUpPage, MainScreen):
 
             frame = F(container, self)
 
@@ -56,6 +57,9 @@ class FramesHandler(tk.Tk):
 
         frame = self.frames[cont]
         frame.tkraise()
+        
+    def set_min_size(self, height, width):
+        self.minsize(width,height)
 
         
 class StartPage(tk.Frame):
@@ -119,7 +123,7 @@ class SignInPage(tk.Frame):
             
         else :
             if self.find_register_data() :
-                self.ctrl.show_frame(StartPage)
+                self.ctrl.show_frame(MainScreen)
             else : 
                 messagebox.showwarning(title='ошибка', message='неверно логин или пароль')
             
@@ -218,7 +222,11 @@ class SignUpPage(tk.Frame):
             
 class MainScreen(tk.Frame):
     def __init__(self, parent, controller):
+        
         tk.Frame.__init__(self, parent)
+        
+        
+        
         data1 = {'Country': ['US','CA','GER','UK','FR'],
          'GDP_Per_Capita': [45000,42000,52000,49000,47000]
         }
@@ -236,12 +244,10 @@ class MainScreen(tk.Frame):
                 }  
         df3 = DataFrame(data3,columns=['Interest_Rate','Stock_Index_Price'])
         
-
-        root= tk.Tk() 
         
         figure1 = plt.Figure(figsize=(6,5), dpi=100)
         ax1 = figure1.add_subplot(111)
-        bar1 = FigureCanvasTkAgg(figure1, root)
+        bar1 = FigureCanvasTkAgg(figure1, self)
         bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
         df1 = df1[['Country','GDP_Per_Capita']].groupby('Country').sum()
         df1.plot(kind='bar', legend=True, ax=ax1)
@@ -249,7 +255,7 @@ class MainScreen(tk.Frame):
 
         figure2 = plt.Figure(figsize=(5,4), dpi=100)
         ax2 = figure2.add_subplot(111)
-        line2 = FigureCanvasTkAgg(figure2, root)
+        line2 = FigureCanvasTkAgg(figure2, self)
         line2.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
         df2 = df2[['Year','Unemployment_Rate']].groupby('Year').sum()
         df2.plot(kind='line', legend=True, ax=ax2, color='r',marker='o', fontsize=10)
@@ -258,12 +264,16 @@ class MainScreen(tk.Frame):
         figure3 = plt.Figure(figsize=(5,4), dpi=100)
         ax3 = figure3.add_subplot(111)
         ax3.scatter(df3['Interest_Rate'],df3['Stock_Index_Price'], color = 'g')
-        scatter3 = FigureCanvasTkAgg(figure3, root) 
+        scatter3 = FigureCanvasTkAgg(figure3, self) 
         scatter3.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
         ax3.legend(['Stock_Index_Price']) 
         ax3.set_xlabel('Interest Rate')
         ax3.set_title('Interest Rate Vs. Stock Index Price')
 
+        button_quit = tk.Button(self, text="Выйти", font=NORMAL,
+                    command=lambda: controller.show_frame(StartPage))
+        
+        button_quit.place(relx=0.95, rely=0.95, anchor="center")
 
         
         
