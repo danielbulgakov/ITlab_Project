@@ -4,6 +4,7 @@
 #include <Wire.h>
 #include "MAX30105.h"
 #include "heartRate.h"
+#include "spo2_algorithm.h"
 
 class ESP32_MAX30102{
 private:
@@ -17,7 +18,14 @@ private:
     int beatAvg;
 
     long irValue;
+    long redValue;
     long delta;
+
+    int32_t spo2;
+    int8_t validspo2, validhr;
+
+    uint32_t irBuffer[100];
+    uint32_t redBuffer[100];
 
 public:
     ESP32_MAX30102(){
@@ -34,7 +42,8 @@ public:
         }
         Serial.println("Place your index finger on the sensor with steady pressure.");
 
-        particleSensor.setup(); //Configure sensor with default settings
+
+        particleSensor.setup();
         particleSensor.setPulseAmplitudeRed(0x0A); //Turn Red LED to low to indicate sensor is running
         particleSensor.setPulseAmplitudeGreen(0); //Turn off Green LED
 
@@ -42,6 +51,7 @@ public:
 
     void GetDataFromMAX30102(){
         irValue = particleSensor.getIR(); 
+        
         //Serial.print("IR Value  "); Serial.print(irValue);  
         //Serial.println("   Get data function");            //  Считываем значение отражённого ИК-светодиода (отвечающего за пульс) и
         if (checkForBeat(irValue) == true) {
@@ -61,6 +71,30 @@ public:
             beatAvg /= RATE_SIZE;                             //  а затем деления всей суммы на коэффициент усреднения (на общее количество элементов в массиве)
             }
         }
+    }
+
+    void GetDataOxygen(){
+        static int i = 0;
+        const size_t packsize = 25;
+        redValue = particleSensor.getRed();
+        irValue = particleSensor.getIR(); 
+        
+        redBuffer[i] = redValue;
+        irBuffer[i] = irValue;
+
+        if (i < packsize){
+            i++;
+        }
+        else{
+            i = 0;
+            int32_t p = beatsPerMinute;
+            maxim_heart_rate_and_oxygen_saturation(irBuffer, packsize, redBuffer, &spo2, &validspo2, &(p), &validhr);
+            
+        }
+    }
+
+    int32_t GetOxy(){
+        return spo2;
     }
 
     String GetIR(){

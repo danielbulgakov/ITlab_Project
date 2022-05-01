@@ -123,7 +123,9 @@ public:
     PackageController(){}
 
     //Метод отправки по блютуз
-
+    byte* GetPacket(){
+        return packet;
+    }
     //нужен ли метод принятия этих данных?
 
     void CreatePack(Package& pack){
