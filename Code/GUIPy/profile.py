@@ -141,13 +141,44 @@ class HealthPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
-        self.img = tk.PhotoImage(file="Pictures\home_page_profile.png")
-        self.img = self.img.subsample(10,10)
-        self.btn_back = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0,
+        self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
+        self.home = self.home.subsample(10,10)
+        self.btn_back = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
         self.btn_back.grid(row=0, column=0)
+        
+        self.heart = tk.PhotoImage(file="Pictures\heart.png")
+        self.heart = self.heart.subsample(10,10)
+        self.btn_heart = tk.Button(self, image=self.heart, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, text="BPM", font=StyleText, command=lambda: control.show_frame(HeartBeatPage))
+        self.btn_heart.grid(row=0, column=1)
+        
+        self.spo2 = tk.PhotoImage(file="Pictures\spo2.png")
+        self.spo2 = self.spo2.subsample(10,10)
+        self.btn_spo2 = tk.Button(self, image=self.spo2, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, text="SPO2", font=StyleText, command=lambda: control.show_frame(SPO2BeatPage))
+        self.btn_spo2.grid(row=0, column=2)
 
+class HeartBeatPage(tk.Frame):
+    def __init__(self, parent, control):
+        tk.Frame.__init__(self,parent)
 
+        self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
+        self.home = self.home.subsample(10,10)
+        self.btn_back = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, text="home", font=StyleText, command=lambda: control.show_frame(HealthPage))
+        self.btn_back.grid(row=0, column=0)
+
+class SPO2BeatPage(tk.Frame):
+    def __init__(self, parent, control):
+        tk.Frame.__init__(self,parent)
+
+        self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
+        self.home = self.home.subsample(10,10)
+        self.btn_back = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, text="home", font=StyleText, command=lambda: control.show_frame(HealthPage))
+        self.btn_back.grid(row=0, column=0)
+        
 class ProfileDataPage(tk.Frame):
 
     def __init__(self, parent, control):

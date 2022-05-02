@@ -1,7 +1,7 @@
 import tkinter as tk
 from typing import Text
 from menu_pages import WelcomePage, StartPage, EntryPage, RegisterPage
-from profile import MainProfilePage, SettingPage, ProfileDataPage, HealthPage
+from profile import MainProfilePage, SPO2BeatPage, SettingPage, ProfileDataPage, HealthPage, HeartBeatPage
 
 
 class MainWindow(tk.Tk):
@@ -20,7 +20,7 @@ class MainWindow(tk.Tk):
 
         
         self.frames = {}
-        for F in (WelcomePage, StartPage, EntryPage, RegisterPage, MainProfilePage, SettingPage, ProfileDataPage, HealthPage):
+        for F in (WelcomePage, StartPage, EntryPage, RegisterPage, MainProfilePage, SettingPage, ProfileDataPage, HealthPage, HeartBeatPage, SPO2BeatPage):
 
             frame = F(container, self)
             self.frames[F] = frame
