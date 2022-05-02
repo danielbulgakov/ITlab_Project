@@ -237,15 +237,14 @@ public:
         {
             uint8_t test;
             if (i == 2)
-            {
-                int j;
-                memcpy(&j, packet + 11 + 2400 + 10 + 40 + i * sizeof(uint8_t), sizeof(uint8_t) * 2);
-                TimeInt[i] = j;
+            {                
                 memcpy(&test, packet + 11 + 2400 + 10 + 40 + i * sizeof(uint8_t), sizeof(uint8_t));
                 Time[i] = test;
+                TimeInt[i] = test * 100;
                 i++;
                 memcpy(&test, packet + 11 + 2400 + 10 + 40 + i * sizeof(uint8_t), sizeof(uint8_t));
                 Time[i] = test;
+                TimeInt[k] += test;
                 i++;
                 k++;
                 continue;

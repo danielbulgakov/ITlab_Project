@@ -1,10 +1,11 @@
-from os import stat
+from glob import glob
 import tkinter as tk
-import tkinter.ttk as ttk
 from PIL import Image, ImageTk
-from pyparsing import col
 import serial.tools.list_ports
 import threading
+import menu_pages
+import struct as strct
+
 
 
 StyleText = "Arial 14 bold"
@@ -17,20 +18,20 @@ class MainProfilePage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
-        self.img = tk.PhotoImage(file="GUI\Pictures\setting.png")
+        self.img = tk.PhotoImage(file="Pictures\setting.png")
         self.img = self.img.subsample(10,10)
         self.btn_setting = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0, 
                                  padx=10, text="настройки", font=StyleText, command=lambda: control.show_frame(SettingPage))
         self.btn_setting.grid(row=0, column=0)
 
-        self.img1 = tk.PhotoImage(file="GUI\Pictures//avatar.png")
+        self.img1 = tk.PhotoImage(file="Pictures//avatar.png")
         self.img1 = self.img1.subsample(10,10)
         self.btn_profile = tk.Button(self, image=self.img1, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, text="мой профиль", font=StyleText, command=lambda: control.show_frame(ProfileDataPage))
         self.btn_profile.grid(row=0, column=2, sticky=tk.W)
 
 
-        temp = Image.open("GUI\Pictures\medical_care.png")
+        temp = Image.open("Pictures\medical_care.png")
         temp = temp.resize((62, 62), Image.ANTIALIAS)
         temp = ImageTk.PhotoImage(temp)
         self.btn_params = tk.Button(self, image=temp, compound=tk.TOP, highlightthickness=0, bd=0, 
@@ -41,18 +42,18 @@ class MainProfilePage(tk.Frame):
         maintext = "\n\nЭто главная страница вашего профиля.\n\nЗдесь приведена небольшая инструкция по пользованию.\n\nПри нажатии первой слева кнопки вызывается окно, \nгде устанавливаются параметры для подключения к микроконтроллеру.\n\nПри нажатии второй слева кнопки вызывается окно, \nгде будут отображены ваши параметры.\n\nПри нажатии третьей кнопки слева вызывется окно, \nгде будут представлены данные профиля."
         self.label1 = tk.Label(self, text=maintext, font=StyleText, justify=tk.CENTER).grid(row=1, column=0, columnspan=3)
         
-        self.img2 = tk.PhotoImage(file="GUI\Pictures//back.png")
+        self.img2 = tk.PhotoImage(file="Pictures//back.png")
         self.img2 = self.img2.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img2, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="выйти", font=StyleText, command=lambda: control.show_frame(ProfileDataPage))
+                                 padx=25, text="выйти", font=StyleText, command=lambda: control.show_frame(menu_pages.StartPage))
         self.btn_back.grid(row=2, column=0, columnspan=3 ,sticky=tk.N)
 
-
+#Тот класс откуда берутся все данные
 class SettingPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
-        self.img = tk.PhotoImage(file="GUI\Pictures\home_page_profile.png")
+        self.img = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.img = self.img.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
@@ -73,6 +74,17 @@ class SettingPage(tk.Frame):
         
         self.baud_select()
         self.update_coms()
+
+        #те самые массивы данных
+        self.ax = [] 
+        self.ay = [] 
+        self.az = []
+        self.gx = [] 
+        self.gy = [] 
+        self.gz = []
+        self.pulse = [] 
+        self.sp02 = [] 
+        self.time = [] 
 
     def connect_check(self,arg):
         if "-" in self.clicked_com.get() or "-" in self.clicked_bd.get():
@@ -105,22 +117,91 @@ class SettingPage(tk.Frame):
         self.drop_COM.grid(column=2, row=2, padx=50)
         self.connect_check(0)
 
+
+    #Не придумал как очищать буфер
     def readSerial(self):
         #print("thread start")
         self.serialData
         while self.serialData:
-            #Получается массив байт
-            data = ser.readline()
-            if len(data) > 0:
+            #Получается массив байт (несколько массивов байт ибо лучше не придумал как эту хрень сделать)
+            data1 = self.ser.read(11)
+            data2 = self.ser.read(240)
+            data3 = self.ser.read(10)
+            data4 = self.ser.read(40)
+            data5 = self.ser.read(7)
+            data6 = self.ser.read(10)
+            if len(data1) > 0:
                 try:
-                    data1 = str(data, 'utf-8')
-                    #sensor = int(data.decode('utf8'))
-                    print(data1)
+                    #Перенос этих всяких данных в нормальные форматы
+                    check1 = strct.unpack('11c', data1)
+                    print(check1)
+                    #показания гиро и акса
+                    check2 = strct.unpack('60f', data2)
+                    print(check2)
+                    #pulse
+                    check3 = strct.unpack('10B', data3)
+                    print(check3)
+                    #spo2
+                    check4 = strct.unpack('10f', data4)
+                    print(check4)
+                    #время
+                    check5 = strct.unpack('7B', data5)
+                    print(check5)
+                    check6 = strct.unpack('10c', data6)
+                    print(check6)
+                    #заполнение массивов
+                    for i in range(0, 10):
+                        self.ax.append(check2[i])
+                        print(self.ax)
+
+                    for i in range(10, 20):
+                        self.ay.append(check2[i])
+                        print(self.ay)
+
+                    for i in range(20, 30):
+                        self.az.append(check2[i])
+                        print(self.az)
+
+                    for i in range(30, 40):
+                        self.gx.append(check2[i])
+                        print(self.ay)
+                    
+                    for i in range(40, 50):
+                        self.gy.append(check2[i])
+                        print(self.gy)
+
+                    for i in range(50, 60):
+                        self.gz.append(check2[i])
+                        print(self.gz)
+
+                    for i in range(0, 10):
+                        self.pulse.append(check3[i])
+                        print(self.pulse)
+
+                    for i in range(0, 10):
+                        self.sp02.append(check4[i])
+                        print(self.sp02)
+
+                    for i in range(0, 7):
+                        self.time.append(check5[i])
+                        print(self.time)
+
+                    self.ax.clear()
+                    self.ay.clear()
+                    self.az.clear()
+                    self.gx.clear()
+                    self.gy.clear()
+                    self.gz.clear()
+                    self.pulse.clear()
+                    self.sp02.clear()
+                    self.time.clear()
                 except:
                     pass
+        
+           
+            
 
     def connection(self):
-        global ser
         if self.connect_btn["text"] in "Disconnect":
             self.connect_btn["text"] = "Connect"
             self.refresh_btn["state"] = "active"
@@ -136,25 +217,24 @@ class SettingPage(tk.Frame):
             self.port = self.clicked_com.get()
             self.baud = self.clicked_bd.get()
             try:
-                ser = serial.Serial(self.port, self.baud, timeout=0)
+                self.ser = serial.Serial(self.port, self.baud)
             except:
                 pass
             t1 = threading.Thread(target= self.readSerial)
             t1.daemon = True
             t1.start()
 
+#Тот класс куда должны быть переданы эти данные
 #Тут должны быть графики пульса, spo2, активность
 class HealthPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
-        self.img = tk.PhotoImage(file="GUI\Pictures\home_page_profile.png")
+        self.img = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.img = self.img.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
         self.btn_back.grid(row=0, column=0)
-
-        
 
 
 class ProfileDataPage(tk.Frame):
@@ -173,7 +253,7 @@ class ProfileDataPage(tk.Frame):
 
         self.contr = False
 
-        self.img = tk.PhotoImage(file="GUI\Pictures\home_page_profile.png")
+        self.img = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.img = self.img.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0,
                                  text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
