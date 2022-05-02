@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from os import stat
 from sqlite3 import Row
 import tkinter as tk
@@ -16,11 +17,13 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, 
 NavigationToolbar2Tk)
 from AssetsClass.Heart import HeartGif
+import AssetsClass.ConnectHandler as ConHan
 
 MyText = 'Arial 17 bold'
 EntryText = "Arial 14 bold"
 StyleText = "Arial 14 bold"
 
+ch = ConHan.ConnectHandler()
 class Graphics():
     pass
 
@@ -110,19 +113,7 @@ class SettingPage(tk.Frame):
         self.drop_COM.grid(column=2, row=2, padx=50)
         self.connect_check(0)
 
-    def readSerial(self):
-        #print("thread start")
-        self.serialData
-        while self.serialData:
-            #Получается массив байт
-            data = ser.readline()
-            if len(data) > 0:
-                try:
-                    data1 = str(data, 'utf-8')
-                    #sensor = int(data.decode('utf8'))
-                    print(data1)
-                except:
-                    pass
+
 
     def connection(self):
         global ser
@@ -140,19 +131,23 @@ class SettingPage(tk.Frame):
             self.drop_COM["state"] = "disable"
             self.port = self.clicked_com.get()
             self.baud = self.clicked_bd.get()
+            
+            
             try:
                 ser = serial.Serial(self.port, self.baud, timeout=0)
             except:
                 pass
-            t1 = threading.Thread(target= self.readSerial)
-            t1.daemon = True
-            t1.start()
+            
+            ch.connect(self.port, self.baud)
+            
+            
+
 
 #Тут должны быть графики пульса, spo2, активность
 class HealthPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
-
+        
         self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.home = self.home.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
@@ -200,6 +195,7 @@ class HeartBeatPage(tk.Frame):
         
         
     def plot(self, beats_array) : 
+        
         fig = plt.figure(figsize=(10, 4), dpi=80)
         fig.patch.set_alpha(0.0)
         fig.patch.set_facecolor('gray')
@@ -224,11 +220,16 @@ class HeartBeatPage(tk.Frame):
 
 
 class SPO2BeatPage(tk.Frame):
+    
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
-
-        self.heartbeat = [85,86,85,86,85,86,85,86,85,86]
-
+        
+        t3 = threading.Thread(target= self.after(0, self.getdata, 1000))
+        t3.daemon = True
+        t3.start()
+        
+        self.fig = plt.figure(figsize=(10, 4), dpi=80)
+        
         self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.home = self.home.subsample(10,10)
         self.btn_home = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
@@ -245,7 +246,7 @@ class SPO2BeatPage(tk.Frame):
         self.btn_spo2 = tk.Button(self, image=self.spo2, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, font=StyleText, command=lambda: control.show_frame(SPO2BeatPage))
         self.btn_spo2.grid(row=0, column=99)
-        self.plot(self.heartbeat)
+        
         
         
         usefuldata = 'asdd'
@@ -253,11 +254,16 @@ class SPO2BeatPage(tk.Frame):
         label = tk.Label(self, text=usefuldata, font=MyText)
         label.grid(row=2, column=0)
         
+    def getdata(self, timespan):
+
+        self.heartbeat = ch.GetSpO2() 
+        self.fig.clear()
+        self.plot(self.heartbeat)
+        self.after(timespan, self.getdata, 1000)
+        
         
     def plot(self, beats_array) : 
-        fig = plt.figure(figsize=(10, 4), dpi=80)
-        
-
+       
         y = np.array(beats_array)
         
         plt.plot( y, color="blue")
@@ -269,7 +275,7 @@ class SPO2BeatPage(tk.Frame):
         # plt.axes().get_xaxis().set_visible(False)
         # creating the Tkinter canvas
         # containing the Matplotlib figure
-        canvas = FigureCanvasTkAgg(fig, self)  
+        canvas = FigureCanvasTkAgg(self.fig, self)  
         
         canvas.draw()
       
