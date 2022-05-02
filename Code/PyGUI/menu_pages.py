@@ -16,7 +16,7 @@ class WelcomePage(tk.Frame):
         label = tk.Label(self, text="Добро пожаловать в приложение!", font=MyText)
         label.place(relx=0.5, rely=0.2, anchor="center")
 
-        my_image = tk.PhotoImage(file="GUI/Pictures/ESP_pictures.png")
+        my_image = tk.PhotoImage(file="Pictures/ESP_pictures.png")
         label1 = tk.Label(self, image=my_image)
         label1.image = my_image
         label1.place(relx=0.5, rely=0.7, anchor="center")
@@ -46,14 +46,14 @@ class EntryPage(tk.Frame):
         self.password = tk.StringVar()
         self.control = control
 
-        img = Image.open("GUI\Pictures\login.png")
+        img = Image.open("Pictures\login.png")
         img = img.resize((25, 25), Image.ANTIALIAS)
         img = ImageTk.PhotoImage(img)
         panel = tk.Label(self, image=img)
         panel.image = img
         panel.place(relx=0.25, rely=0.5, anchor="center")
 
-        img1 = Image.open("GUI\Pictures\zamok.png")
+        img1 = Image.open("Pictures\zamok.png")
         img1 = img1.resize((25, 25), Image.ANTIALIAS)
         img1 = ImageTk.PhotoImage(img1)
         panel1 = tk.Label(self, image=img1)
@@ -92,7 +92,7 @@ class EntryPage(tk.Frame):
         self.password.set("")
         
     def find_register_data(self):
-        data = open("GUI\profiles.txt", "r")
+        data = open("profiles.txt", "r")
         if (self.username.get() + "|" + self.password.get() + "\n") in data : 
             data.close()
             return True
@@ -171,12 +171,12 @@ class RegisterPage(tk.Frame):
         self.rpassword.set("")
         
     def add_register_data(self):
-        data = open("GUI\profiles.txt", "a")
+        data = open("profiles.txt", "a")
         data.write(self.username.get() + "|" + self.password.get() + "\n")
         data.close()
         
     def is_overwrite_data(self, name):
-        data = open("GUI\profiles.txt", "r")
+        data = open("profiles.txt", "r")
         name = name + '|'
         if name in data.read():
            data.close()

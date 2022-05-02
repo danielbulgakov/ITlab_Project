@@ -10,7 +10,7 @@ class MainWindow(tk.Tk):
 
         self.title("ESPушка")
         self.geometry("800x600")
-        self.iconbitmap("GUI\Pictures\ESP32.ico") #D:\Programming_YuninDD\ITlab_Project\Server\GUI\Pictures\ESP32.ico
+        self.iconbitmap("Pictures\ESP32.ico") #D:\Programming_YuninDD\ITlab_Project\Server\GUI\Pictures\ESP32.ico
 
 
         container = tk.Frame(self)

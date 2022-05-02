@@ -14,45 +14,38 @@ class Graphics():
 
 class MainProfilePage(tk.Frame):
 
-    def __init__(self, parent, control):
-        tk.Frame.__init__(self,parent)
+   def __init__(self, parent, control):
+      tk.Frame.__init__(self,parent)
 
-        self.img = tk.PhotoImage(file="GUI\Pictures\setting.png")
-        self.img = self.img.subsample(10,10)
-        self.btn_setting = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0, 
+      self.img = tk.PhotoImage(file="Pictures\setting.png")
+      self.img = self.img.subsample(10,10)
+      self.btn_setting = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0, 
                                  padx=10, text="настройки", font=StyleText, command=lambda: control.show_frame(SettingPage))
-        self.btn_setting.grid(row=0, column=0)
+      self.btn_setting.grid(row=0, column=0)
 
-        self.img1 = tk.PhotoImage(file="GUI\Pictures//avatar.png")
-        self.img1 = self.img1.subsample(10,10)
-        self.btn_profile = tk.Button(self, image=self.img1, compound=tk.TOP, highlightthickness=0, bd=0,
+      self.img1 = tk.PhotoImage(file="Pictures\\avatar.png")
+      self.img1 = self.img1.subsample(10,10)
+      self.btn_profile = tk.Button(self, image=self.img1, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, text="мой профиль", font=StyleText, command=lambda: control.show_frame(ProfileDataPage))
-        self.btn_profile.grid(row=0, column=2, sticky=tk.W)
+      self.btn_profile.grid(row=0, column=2, sticky=tk.W)
 
 
-        temp = Image.open("GUI\Pictures\medical_care.png")
-        temp = temp.resize((62, 62), Image.ANTIALIAS)
-        temp = ImageTk.PhotoImage(temp)
-        self.btn_params = tk.Button(self, image=temp, compound=tk.TOP, highlightthickness=0, bd=0, 
+      temp = Image.open("Pictures\medical_care.png")
+      temp = temp.resize((62, 62), Image.ANTIALIAS)
+      temp = ImageTk.PhotoImage(temp)
+      self.btn_params = tk.Button(self, image=temp, compound=tk.TOP, highlightthickness=0, bd=0, 
                                  padx=200, text="здоровье", font=StyleText, pady=2, bg="green", activebackground="green", command=lambda: control.show_frame(HealthPage))
-        self.btn_params.image=temp
-        self.btn_params.grid(row=0, column=1)
+      self.btn_params.image=temp
+      self.btn_params.grid(row=0, column=1)
 
-        maintext = "\n\nЭто главная страница вашего профиля.\n\nЗдесь приведена небольшая инструкция по пользованию.\n\nПри нажатии первой слева кнопки вызывается окно, \nгде устанавливаются параметры для подключения к микроконтроллеру.\n\nПри нажатии второй слева кнопки вызывается окно, \nгде будут отображены ваши параметры.\n\nПри нажатии третьей кнопки слева вызывется окно, \nгде будут представлены данные профиля."
-        self.label1 = tk.Label(self, text=maintext, font=StyleText, justify=tk.CENTER).grid(row=1, column=0, columnspan=3)
-        
-        self.img2 = tk.PhotoImage(file="GUI\Pictures//back.png")
-        self.img2 = self.img2.subsample(10,10)
-        self.btn_back = tk.Button(self, image=self.img2, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="выйти", font=StyleText, command=lambda: control.show_frame(ProfileDataPage))
-        self.btn_back.grid(row=2, column=0, columnspan=3 ,sticky=tk.N)
-
+      maintext = "\n\nЭто главная страница вашего профиля.\n\nЗдесь приведена небольшая инструкция по пользованию.\n\nПри нажатии первой слева кнопки вызывается окно, \nгде устанавливаются параметры для подключения к микроконтроллеру.\n\nПри нажатии второй слева кнопки вызывается окно, \nгде будут отображены ваши параметры.\n\nПри нажатии третьей кнопки слева вызывется окно, \nгде будут представлены данные профиля."
+      self.label1 = tk.Label(self, text=maintext, font=StyleText, justify=tk.CENTER).grid(row=1, column=0, columnspan=3)
 
 class SettingPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
-        self.img = tk.PhotoImage(file="GUI\Pictures\home_page_profile.png")
+        self.img = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.img = self.img.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
@@ -148,13 +141,11 @@ class HealthPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
-        self.img = tk.PhotoImage(file="GUI\Pictures\home_page_profile.png")
+        self.img = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.img = self.img.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
         self.btn_back.grid(row=0, column=0)
-
-        
 
 
 class ProfileDataPage(tk.Frame):
@@ -173,7 +164,7 @@ class ProfileDataPage(tk.Frame):
 
         self.contr = False
 
-        self.img = tk.PhotoImage(file="GUI\Pictures\home_page_profile.png")
+        self.img = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.img = self.img.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0,
                                  text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
