@@ -1,12 +1,24 @@
 from os import stat
+from sqlite3 import Row
 import tkinter as tk
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
 from pyparsing import col
 import serial.tools.list_ports
 import threading
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, 
+NavigationToolbar2Tk)
+from AssetsClass.Heart import HeartGif
+
+MyText = 'Arial 17 bold'
+EntryText = "Arial 14 bold"
 StyleText = "Arial 14 bold"
 
 class Graphics():
@@ -163,21 +175,110 @@ class HeartBeatPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
+        self.heartbeat = [200,200,200,200,200,200,200,200,200,200,200,200,200]
+
         self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.home = self.home.subsample(10,10)
-        self.btn_back = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="home", font=StyleText, command=lambda: control.show_frame(HealthPage))
-        self.btn_back.grid(row=0, column=0)
+        self.btn_home = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage), anchor='nw')
+        self.btn_home.grid(row=0, column=0, sticky='nw')
+        
+        self.back = tk.PhotoImage(file="Pictures\\back-.png")
+        self.back = self.back.subsample(10,10)
+        self.btn_back = tk.Button(self, image=self.back, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, text="back", font=StyleText, command=lambda: control.show_frame(HealthPage), anchor='nw')
+        self.btn_back.grid(row=0, column=1,  sticky='nw')
+        
+        self.plot(self.heartbeat)
+        heart = HeartGif(self, row=0,col=99, width=100, height=100)
+        self.after(0, heart.update, min(max(30, 190 - int(np.average(self.heartbeat))), 190-60)  ) 
+        
+        usefuldata = 'asdd'
+        
+        label = tk.Label(self, text=usefuldata, font=MyText)
+        label.grid(row=2, column=0)
+        
+        
+    def plot(self, beats_array) : 
+        fig = plt.figure(figsize=(10, 4), dpi=80)
+        fig.patch.set_alpha(0.0)
+        fig.patch.set_facecolor('gray')
+
+        y = np.array(beats_array)
+        
+        plt.plot( y, color="red")
+        
+        ax = plt.gca()
+        ax.axes.xaxis.set_visible(False)
+        
+        # plt.axes().get_xaxis().set_visible(False)
+        # creating the Tkinter canvas
+        # containing the Matplotlib figure
+        canvas = FigureCanvasTkAgg(fig, self)  
+        
+        canvas.draw()
+      
+        # placing the canvas on the Tkinter window
+        canvas.get_tk_widget().grid(row=1, column=0, columnspan=100)
+
+
 
 class SPO2BeatPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
+        self.heartbeat = [200,200,200,200,200,200,200,200,200,200,200,200,200]
+
         self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.home = self.home.subsample(10,10)
-        self.btn_back = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="home", font=StyleText, command=lambda: control.show_frame(HealthPage))
-        self.btn_back.grid(row=0, column=0)
+        self.btn_home = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage), anchor='nw')
+        self.btn_home.grid(row=0, column=0, sticky='nw')
+        
+        self.back = tk.PhotoImage(file="Pictures\\back-.png")
+        self.back = self.back.subsample(10,10)
+        self.btn_back = tk.Button(self, image=self.back, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, text="back", font=StyleText, command=lambda: control.show_frame(HealthPage), anchor='nw')
+        self.btn_back.grid(row=0, column=1,  sticky='nw')
+        self.spo2 = tk.PhotoImage(file="Pictures\spo2.png")
+        self.spo2 = self.spo2.subsample(10,10)
+        self.btn_spo2 = tk.Button(self, image=self.spo2, compound=tk.TOP, highlightthickness=0, bd=0,
+                                 padx=25, font=StyleText, command=lambda: control.show_frame(SPO2BeatPage))
+        self.btn_spo2.grid(row=0, column=99)
+        self.plot(self.heartbeat)
+        
+        
+        usefuldata = 'asdd'
+        
+        label = tk.Label(self, text=usefuldata, font=MyText)
+        label.grid(row=2, column=0)
+        
+        
+    def plot(self, beats_array) : 
+        fig = plt.figure(figsize=(10, 4), dpi=80)
+        fig.patch.set_alpha(0.0)
+        fig.patch.set_facecolor('gray')
+
+        y = np.array(beats_array)
+        
+        plt.plot( y, color="red")
+        
+        ax = plt.gca()
+        ax.axes.xaxis.set_visible(False)
+        
+        # plt.axes().get_xaxis().set_visible(False)
+        # creating the Tkinter canvas
+        # containing the Matplotlib figure
+        canvas = FigureCanvasTkAgg(fig, self)  
+        
+        canvas.draw()
+      
+        # placing the canvas on the Tkinter window
+        canvas.get_tk_widget().grid(row=1, column=0, columnspan=100)
+        
+    
+        
+
         
 class ProfileDataPage(tk.Frame):
 
