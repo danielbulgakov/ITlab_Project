@@ -227,7 +227,7 @@ class SPO2BeatPage(tk.Frame):
     def __init__(self, parent, control):
         tk.Frame.__init__(self,parent)
 
-        self.heartbeat = [200,200,200,200,200,200,200,200,200,200,200,200,200]
+        self.heartbeat = [85,86,85,86,85,86,85,86,85,86]
 
         self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.home = self.home.subsample(10,10)
@@ -256,12 +256,12 @@ class SPO2BeatPage(tk.Frame):
         
     def plot(self, beats_array) : 
         fig = plt.figure(figsize=(10, 4), dpi=80)
-        fig.patch.set_alpha(0.0)
-        fig.patch.set_facecolor('gray')
+        
 
         y = np.array(beats_array)
         
-        plt.plot( y, color="red")
+        plt.plot( y, color="blue")
+        plt.ylim(0,100)
         
         ax = plt.gca()
         ax.axes.xaxis.set_visible(False)
