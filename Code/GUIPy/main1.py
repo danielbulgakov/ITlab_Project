@@ -1,13 +1,20 @@
+from logging import Handler
 import tkinter as tk
 from typing import Text
 from menu_pages import WelcomePage, StartPage, EntryPage, RegisterPage
 from profile import MainProfilePage, SPO2BeatPage, SettingPage, ProfileDataPage, HealthPage, HeartBeatPage
 
+class ESP32_Handeler:
+    variable = 7
+    def __init__(self) : pass
+        
+Handler = ESP32_Handeler
+        
 
 class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
-
+        
         self.title("ESPушка")
         self.geometry("800x600")
         self.iconbitmap("Pictures\ESP32.ico") #D:\Programming_YuninDD\ITlab_Project\Server\GUI\Pictures\ESP32.ico
