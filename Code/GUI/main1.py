@@ -3,7 +3,6 @@ from typing import Text
 from menu_pages import WelcomePage, StartPage, EntryPage, RegisterPage
 from profile import MainProfilePage, SettingPage, ProfileDataPage, HealthPage
 
-
 class MainWindow(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -19,6 +18,7 @@ class MainWindow(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         
+
         self.frames = {}
         for F in (WelcomePage, StartPage, EntryPage, RegisterPage, MainProfilePage, SettingPage, ProfileDataPage, HealthPage):
 

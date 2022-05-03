@@ -10,6 +10,10 @@ import struct as strct
 
 StyleText = "Arial 14 bold"
 
+class CollectorData():
+    def __init__(self):
+        pass
+
 class Graphics():
     pass
 
@@ -152,40 +156,56 @@ class SettingPage(tk.Frame):
                     #заполнение массивов
                     for i in range(0, 10):
                         self.ax.append(check2[i])
-                        print(self.ax)
-
+                        
                     for i in range(10, 20):
                         self.ay.append(check2[i])
-                        print(self.ay)
+                        
 
                     for i in range(20, 30):
                         self.az.append(check2[i])
-                        print(self.az)
+                        
 
                     for i in range(30, 40):
                         self.gx.append(check2[i])
-                        print(self.ay)
                     
                     for i in range(40, 50):
                         self.gy.append(check2[i])
-                        print(self.gy)
+                       
 
                     for i in range(50, 60):
                         self.gz.append(check2[i])
-                        print(self.gz)
+                        
 
                     for i in range(0, 10):
                         self.pulse.append(check3[i])
-                        print(self.pulse)
+                        
 
                     for i in range(0, 10):
                         self.sp02.append(check4[i])
-                        print(self.sp02)
+                        
 
                     for i in range(0, 7):
                         self.time.append(check5[i])
-                        print(self.time)
 
+                    print("АксX:")    
+                    print(self.ax)
+                    print("АксY:")    
+                    print(self.ay)
+                    print("АксZ:")    
+                    print(self.az)
+                    print("ГироX:")    
+                    print(self.gx)
+                    print("ГироY:")    
+                    print(self.gy)
+                    print("ГироZ:")    
+                    print(self.gz)
+                    print("Пульс:")    
+                    print(self.pulse)
+                    print("Кислород:")    
+                    print(self.sp02)
+                    print("Время:")    
+                    print(self.time)
+                    
                     self.ax.clear()
                     self.ay.clear()
                     self.az.clear()
@@ -195,11 +215,22 @@ class SettingPage(tk.Frame):
                     self.pulse.clear()
                     self.sp02.clear()
                     self.time.clear()
+
+
+                    self.zzzzzzzz = self.ax
+                    self.ax = self.zzzzzzzz
+                    self.zzzzzzzz = self.ax
+                    self.ax = self.zzzzzzzz
+                    self.zzzzzzzz = self.ax
+                    self.ax = self.zzzzzzzz
+                    self.zzzzzzzz = self.ax
+                    self.ax = self.zzzzzzzz
                 except:
                     pass
         
            
-            
+    def getax(self):
+        return self.ax
 
     def connection(self):
         if self.connect_btn["text"] in "Disconnect":
