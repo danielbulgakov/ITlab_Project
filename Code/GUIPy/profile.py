@@ -24,6 +24,7 @@ EntryText = "Arial 14 bold"
 StyleText = "Arial 14 bold"
 
 ch = ConHan.ConnectHandler()
+
 class Graphics():
     pass
 
@@ -128,6 +129,7 @@ class SettingPage(tk.Frame):
 
 
     def connection(self):
+        global ch
         if self.connect_btn["text"] in "Disconnect":
             self.connect_btn["text"] = "Connect"
             self.refresh_btn["state"] = "active"
@@ -231,9 +233,9 @@ class HeartBeatPage(tk.Frame):
             self.heartbeat = self.t
         self.fig.clear()
 
-        print("*************************************")
-        print(self.heartbeat)
-        print("*************************************")
+        # print("*************************************")
+        # print(self.heartbeat)
+        # print("*************************************")
 
         self.plot(self.heartbeat)
         self.after(timespan, self.getdata, 1000)
@@ -268,7 +270,7 @@ class SPO2BeatPage(tk.Frame):
         
 
         self.after(0, self.getdata, 1000)
-        
+
         
         self.fig = plt.figure(0, figsize=(10, 4), dpi=80)
         
@@ -305,11 +307,10 @@ class SPO2BeatPage(tk.Frame):
 
         self.heartbeat = ()
         self.t = ch.GetSpO2() 
-        ch.GetPulse()
         
-        print("######################################")
-        print(self.t)
-        print("######################################")
+        # print("######################################")
+        # print(self.t)
+        # print("######################################")
         
         if (len(self.t) != 0) :
             self.heartbeat = self.t
