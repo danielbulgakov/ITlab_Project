@@ -92,7 +92,7 @@ class EntryPage(tk.Frame):
         self.password.set("")
         
     def find_register_data(self):
-        data = open("profiles.txt", "r")
+        data = open("Logs\profiles.txt", "r")
         if (self.username.get() + "|" + self.password.get() + "\n") in data : 
             data.close()
             return True
@@ -171,12 +171,12 @@ class RegisterPage(tk.Frame):
         self.rpassword.set("")
         
     def add_register_data(self):
-        data = open("profiles.txt", "a")
+        data = open("Logs\profiles.txt", "a")
         data.write(self.username.get() + "|" + self.password.get() + "\n")
         data.close()
         
     def is_overwrite_data(self, name):
-        data = open("profiles.txt", "r")
+        data = open("Logs\profiles.txt", "r")
         name = name + '|'
         if name in data.read():
            data.close()

@@ -31,7 +31,7 @@ class ConnectHandler():
         self.port = port
         self.baud = baudrate
         self.serialData = serialData
-        self.ser = serial.Serial(self.port, self.baud, timeout=0)
+        self.ser = serial.Serial(self.port, self.baud)
         
     
     def createthread(self):
