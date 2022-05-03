@@ -15,10 +15,10 @@
 
 
 
-ESP32_Display ESP32_display;
+//ESP32_Display ESP32_display;
 ESP32_Gyro ESP32_gyro;
 ESP32_Time ESP32_time;
-ESP32_SDcard ESP32_sdcard;
+//ESP32_SDcard ESP32_sdcard;
 
 
 
