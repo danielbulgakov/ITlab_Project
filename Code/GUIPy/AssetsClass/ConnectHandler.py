@@ -1,3 +1,4 @@
+from re import T
 import threading
 import struct as strct
 import serial
@@ -8,18 +9,46 @@ import numpy as np
 # и не считывались без необдиомсти и не засоряли поток. Иначе ввод данных будет затруднителен (логин в систему)
 
 class ConnectHandler():
-    def __init__(self) :
+
+    def __init__(self):
+        self.ActiveState = False
+        self.threadisrun = False
+        self.ax = [] 
+        self.ay = [] 
+        self.az = []
+        self.gx = [] 
+        self.gy = [] 
+        self.gz = []
+        self.pulse = [] 
+        self.sp02 = [] 
+        self.time = [] 
         pass
-        
-    def connect(self, port, baudrate):
+    
+     
+
+    def connect(self, port, baudrate, serialData):
+        self.ActiveState = True
         self.port = port
         self.baud = baudrate
+        self.serialData = serialData
         self.ser = serial.Serial(self.port, self.baud, timeout=0)
+        
+    
+    def createthread(self):
+        self.ActiveState = True
         t1 = threading.Thread(target= self.readSerial)
         t1.daemon = True
         t1.start()
-        
+
+    def set_state(self, state):
+        self.ActiveState = state
+
+    def get_state(self):
+        return self.ActiveState
+
     def readSerial(self):
+
+        self.ActiveState = True
         #print("thread start")
         self.serialData
         while self.serialData:
@@ -49,58 +78,82 @@ class ConnectHandler():
                     print(check5)
                     check6 = strct.unpack('10c', data6)
                     print(check6)
+
+                    self.data_destroy()
                     #заполнение массивов
                     for i in range(0, 10):
                         self.ax.append(check2[i])
-                        print(self.ax)
 
                     for i in range(10, 20):
                         self.ay.append(check2[i])
-                        print(self.ay)
 
                     for i in range(20, 30):
                         self.az.append(check2[i])
-                        print(self.az)
 
                     for i in range(30, 40):
                         self.gx.append(check2[i])
-                        print(self.ay)
                     
                     for i in range(40, 50):
                         self.gy.append(check2[i])
-                        print(self.gy)
 
                     for i in range(50, 60):
                         self.gz.append(check2[i])
-                        print(self.gz)
 
                     for i in range(0, 10):
                         self.pulse.append(check3[i])
-                        print(self.pulse)
 
                     for i in range(0, 10):
                         self.sp02.append(check4[i])
-                        print(self.sp02)
 
                     for i in range(0, 7):
                         self.time.append(check5[i])
-                        print(self.time)
 
-                    self.ax.clear()
-                    self.ay.clear()
-                    self.az.clear()
-                    self.gx.clear()
-                    self.gy.clear()
-                    self.gz.clear()
-                    self.pulse.clear()
-                    self.sp02.clear()
-                    self.time.clear()
+                    print("АксX:")    
+                    print(self.ax)
+                    print("АксY:")    
+                    print(self.ay)
+                    print("АксZ:")    
+                    print(self.az)
+                    print("ГироX:")    
+                    print(self.gx)
+                    print("ГироY:")    
+                    print(self.gy)
+                    print("ГироZ:")    
+                    print(self.gz)
+                    print("Пульс:")    
+                    print(self.pulse)
+                    print("Кислород:")    
+                    print(self.sp02)
+                    print("Время:")    
+                    print(self.time)
+
+
                 except:
                     pass
+
     def GetSpO2(self):
-        self.update()
-        print(self.spo2)
-        return self.spo2
-        
-    def update(self):
-        self.spo2 = np.random.randint(10,20,size=7)
+        return self.sp02
+
+    def GetPulse(self):
+        return self.pulse
+
+    def data_destroy(self):
+        self.ax.clear()
+        self.ay.clear()
+        self.az.clear()
+        self.gx.clear()
+        self.gy.clear()
+        self.gz.clear()
+        self.pulse.clear()
+        self.sp02.clear()
+        self.time.clear()
+
+
+    def enddata(self, serialData):
+        self.serialData = serialData
+
+    def getconditionthread(self):
+        return self.threadisrun
+
+    def setconditionthread(self, threadcondition):
+        self.threadisrun = threadcondition

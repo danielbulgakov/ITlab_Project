@@ -1,7 +1,7 @@
 import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import messagebox
-from profile import MainProfilePage
+import profile
 
 
 MyText = 'Arial 17 bold'
@@ -83,7 +83,7 @@ class EntryPage(tk.Frame):
             messagebox.showwarning(title='ошибка', message='неверно указаны данные')
         else :
             if self.find_register_data() :
-                self.control.show_frame(MainProfilePage)
+                self.control.show_frame(profile.MainProfilePage)
             else : 
                 messagebox.showwarning(title='ошибка', message='неверно логин или пароль')
             
