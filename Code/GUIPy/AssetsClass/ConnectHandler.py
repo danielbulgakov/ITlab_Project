@@ -63,21 +63,30 @@ class ConnectHandler():
                 try:
                     #Перенос этих всяких данных в нормальные форматы
                     check1 = strct.unpack('11c', data1)
-                    print(check1)
+                    # print(check1)
+
+                    check6 = strct.unpack('10c', data6)
+                    # print(check6)
+                    # print("##########################")
+                    
+                    
+                    if (check1 != (b'<', b'S', b't', b'a', b'r', b't', b'_', b'P', b'a', b'c', b'k') or 
+                    check6 != (b'E', b'n', b'd', b'_', b'P', b'a', b'c', b'k', b'>', b'\x00')) :
+                        continue
+                    
                     #показания гиро и акса
                     check2 = strct.unpack('60f', data2)
-                    print(check2)
+                    # print(check2)
                     #pulse
                     check3 = strct.unpack('10B', data3)
-                    print(check3)
+                    # print(check3)
                     #spo2
                     check4 = strct.unpack('10f', data4)
-                    print(check4)
+                    # print(check4)
                     #время
                     check5 = strct.unpack('7B', data5)
-                    print(check5)
-                    check6 = strct.unpack('10c', data6)
-                    print(check6)
+                    # print(check5)
+
 
                     self.data_destroy()
                     #заполнение массивов
