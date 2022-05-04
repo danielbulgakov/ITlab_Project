@@ -3,6 +3,7 @@ from os import stat
 from sqlite3 import Row
 import tkinter as tk
 import tkinter.ttk as ttk
+from venv import create
 from PIL import Image, ImageTk
 from pyparsing import col
 import serial.tools.list_ports
@@ -18,12 +19,20 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
 NavigationToolbar2Tk)
 from AssetsClass.Heart import HeartGif
 import AssetsClass.ConnectHandler as ConHan
+from AssetsClass.UsersData import WorkerUsersData
+from AssetsClass.GlobalVariables import user_login
 
 MyText = 'Arial 17 bold'
 EntryText = "Arial 14 bold"
 StyleText = "Arial 14 bold"
 
 ch = ConHan.ConnectHandler()
+
+print("А вот и логин")
+print(user_login)
+print("Логин выше")
+
+wud = WorkerUsersData() #объект того самого класса для работы с данными
 
 class Graphics():
     pass
@@ -65,9 +74,6 @@ class MainProfilePage(tk.Frame):
     
     def ChangeState(self):
         ch.ActiveState = False
-        
-
-
 
 class SettingPage(tk.Frame):
     def __init__(self, parent, control):
@@ -159,10 +165,6 @@ class SettingPage(tk.Frame):
                 ch.setconditionthread(True)
             else:
                 pass
-           
-            
-            
-
 
 #Тут должны быть графики пульса, spo2, активность
 class HealthPage(tk.Frame):
@@ -261,8 +263,6 @@ class HeartBeatPage(tk.Frame):
         # placing the canvas on the Tkinter window
         canvas.get_tk_widget().grid(row=1, column=0, columnspan=100)
 
-
-
 class SPO2BeatPage(tk.Frame):
     
     def __init__(self, parent, control):
@@ -339,10 +339,6 @@ class SPO2BeatPage(tk.Frame):
         # placing the canvas on the Tkinter window
         canvas.get_tk_widget().grid(row=1, column=0, columnspan=100)
         
-    
-        
-
-        
 class ProfileDataPage(tk.Frame):
 
     def __init__(self, parent, control):
@@ -365,32 +361,58 @@ class ProfileDataPage(tk.Frame):
                                  text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
         self.btn_back.grid(row=0, column=0,columnspan=3, sticky=tk.W)
 
-
         fields = ["Имя", "Фамилия", "Телефон", "Email", "Вес", "Рост", "Возраст"]
+        arr = [self.name, self.surname, self.phone, self.email, self.weight, self.height, self.age]
+
         labels = [tk.Label(self, text=f, font=StyleText) for f in fields]
-        self.entries = [tk.Entry(self,width=30, state='disabled', font=StyleText) for _ in fields]
+        self.entries = [tk.Entry(self,width=30, state='disabled', font=StyleText, textvariable=d) for d in arr]
         self.widgets = list(zip(labels, self.entries))
-            
+
+        #self.fill_start_data()    
 
         for i, (label, entry) in enumerate(self.widgets):
             label.grid(row=i+1, column=0, sticky=tk.E, padx=100,columnspan=2)
             entry.grid(row=i+1, column=3, padx=10, pady=5)
-      
 
         self.login_btn = tk.Button(self, text="Изменить данные", command=self.changedataprofile)
         self.clear_btn = tk.Button(self, text="Сохранить данные", command=self.savedataprofile)
+        self.refres = tk.Button(self, text="Обновить", command=self.fill_start_data)
        
         self.login_btn.place(relx=0.3, rely=0.7)
         self.clear_btn.place(relx=0.5, rely=0.7)
+        self.refres.place(relx=0.7, rely=0.7)
     
     #добавить сохранение в файл
 
+    def fill_start_data(self):
+        wud.set_user_login(user_login)
+        i = wud.find_data()
+        if i != 0:
+            ls = wud.get_download_data()
+            j = 1
+            for entry in self.entries:
+                entry.config(state="normal")
+                entry.insert(0, ls[j])
+                entry.config(state="disable")
+                j += 1
+        else:
+            pass
+
     def changedataprofile(self):
+        wud.set_user_login(user_login)
         for entry in self.entries:
             entry.config(state="normal")
             
             
     def savedataprofile(self):
+        wud.printlogin()
+        i = wud.find_data()
+        if i == 0:
+            wud.write_data_in_file(self.name.get(), self.surname.get(), self.phone.get(), self.email.get(), 
+                                self.weight.get(), self.height.get(), self.age.get())
+        else:
+            wud.rewrite_data_in_file(self.name.get(), self.surname.get(), self.phone.get(), self.email.get(), 
+                                self.weight.get(), self.height.get(), self.age.get(), i)
         for entry in self.entries:
             entry.config(state="disable")
         
