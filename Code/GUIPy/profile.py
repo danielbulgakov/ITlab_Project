@@ -28,10 +28,6 @@ StyleText = "Arial 14 bold"
 
 ch = ConHan.ConnectHandler()
 
-print("А вот и логин")
-print(user_login)
-print("Логин выше")
-
 wud = WorkerUsersData() #объект того самого класса для работы с данными
 
 class Graphics():
@@ -69,7 +65,7 @@ class MainProfilePage(tk.Frame):
         self.img2 = tk.PhotoImage(file="Pictures//back.png")
         self.img2 = self.img2.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img2, compound=tk.TOP, highlightthickness=0, bd=0,
-                                    padx=25, text="выйти", font=StyleText, command=lambda: [self.ChangeState, control.show_frame(menu_pages.StartPage)])
+                                    padx=25, text="выйти", font=StyleText, command=lambda: [self.ChangeState(), control.show_frame(menu_pages.StartPage)])
         self.btn_back.grid(row=2, column=0, columnspan=3 ,sticky=tk.N)
     
     def ChangeState(self):
@@ -358,7 +354,7 @@ class ProfileDataPage(tk.Frame):
         self.img = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.img = self.img.subsample(10,10)
         self.btn_back = tk.Button(self, image=self.img, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage))
+                                 text="home", font=StyleText, command=lambda: [self.delete_data(), control.show_frame(MainProfilePage)])
         self.btn_back.grid(row=0, column=0,columnspan=3, sticky=tk.W)
 
         fields = ["Имя", "Фамилия", "Телефон", "Email", "Вес", "Рост", "Возраст"]
@@ -383,8 +379,14 @@ class ProfileDataPage(tk.Frame):
         self.refres.place(relx=0.7, rely=0.7)
     
     #добавить сохранение в файл
+    def delete_data(self):
+        for entry in self.entries:
+            entry.config(state="normal")
+            entry.delete(0,tk.END)
+            entry.config(state="disable")
 
     def fill_start_data(self):
+        self.delete_data()
         wud.set_user_login(user_login)
         i = wud.find_data()
         if i != 0:
@@ -405,7 +407,7 @@ class ProfileDataPage(tk.Frame):
             
             
     def savedataprofile(self):
-        wud.printlogin()
+        #wud.printlogin()
         i = wud.find_data()
         if i == 0:
             wud.write_data_in_file(self.name.get(), self.surname.get(), self.phone.get(), self.email.get(), 

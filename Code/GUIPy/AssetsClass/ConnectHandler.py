@@ -47,7 +47,6 @@ class ConnectHandler():
         return self.ActiveState
 
     def readSerial(self):
-
         self.ActiveState = True
         #print("thread start")
         self.serialData
@@ -70,9 +69,9 @@ class ConnectHandler():
                     # print("##########################")
                     
                     
-                    if (check1 != (b'<', b'S', b't', b'a', b'r', b't', b'_', b'P', b'a', b'c', b'k') or 
-                    check6 != (b'E', b'n', b'd', b'_', b'P', b'a', b'c', b'k', b'>', b'\x00')) :
-                        continue
+                    #if (check1 != (b'<', b'S', b't', b'a', b'r', b't', b'_', b'P', b'a', b'c', b'k') or 
+                    #check6 != (b'E', b'n', b'd', b'_', b'P', b'a', b'c', b'k', b'>', b'\x00')) :
+                        #continue
                     
                     #показания гиро и акса
                     check2 = strct.unpack('60f', data2)
@@ -87,8 +86,8 @@ class ConnectHandler():
                     check5 = strct.unpack('7B', data5)
                     # print(check5)
 
-
-                    self.data_destroy()
+                    #мы можем их не удалять и посмотреть что получится)
+                    #self.data_destroy()
                     #заполнение массивов
                     for i in range(0, 10):
                         self.ax.append(check2[i])
@@ -115,26 +114,34 @@ class ConnectHandler():
                         self.sp02.append(check4[i])
 
                     for i in range(0, 7):
+                        if i == 2:
+                            self.time.append(check5[i] * 100 + check5[i + 1])
+                            i += 1
+                            continue
                         self.time.append(check5[i])
+                       
+                            
+                    
+                    
 
-                    print("АксX:")    
-                    print(self.ax)
-                    print("АксY:")    
-                    print(self.ay)
-                    print("АксZ:")    
-                    print(self.az)
-                    print("ГироX:")    
-                    print(self.gx)
-                    print("ГироY:")    
-                    print(self.gy)
-                    print("ГироZ:")    
-                    print(self.gz)
-                    print("Пульс:")    
-                    print(self.pulse)
-                    print("Кислород:")    
-                    print(self.sp02)
-                    print("Время:")    
-                    print(self.time)
+                    # print("АксX:")    
+                    # print(self.ax)
+                    # print("АксY:")    
+                    # print(self.ay)
+                    # print("АксZ:")    
+                    # print(self.az)
+                    # print("ГироX:")    
+                    # print(self.gx)
+                    # print("ГироY:")    
+                    # print(self.gy)
+                    # print("ГироZ:")    
+                    # print(self.gz)
+                    # print("Пульс:")    
+                    # print(self.pulse)
+                    # print("Кислород:")    
+                    # print(self.sp02)
+                    # print("Время:")    
+                    # print(self.time)
 
 
                 except:
@@ -145,6 +152,27 @@ class ConnectHandler():
 
     def GetPulse(self):
         return self.pulse
+    
+    def GetAx(self):
+        return self.ax
+    
+    def GetAy(self):
+        return self.ay
+    
+    def GetAz(self):
+        return self.az
+
+    def GetGx(self):
+        return self.gx
+    
+    def GetGy(self):
+        return self.gy
+    
+    def GetGz(self):
+        return self.gz 
+
+    def GetTime(self):
+        return self.time 
 
     def data_destroy(self):
         self.ax.clear()
