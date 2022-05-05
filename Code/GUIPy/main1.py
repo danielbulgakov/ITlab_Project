@@ -2,7 +2,8 @@ from logging import Handler
 import tkinter as tk
 from typing import Text
 from menu_pages import WelcomePage, StartPage, EntryPage, RegisterPage
-from profile import MainProfilePage, SPO2BeatPage, SettingPage, ProfileDataPage, HealthPage, HeartBeatPage
+from profile import MainProfilePage, SettingPage, ProfileDataPage
+from rt_pages import  SPO2BeatPage, HeartBeatPage, HealthPage
 
 class ESP32_Handeler:
     variable = 7
@@ -18,7 +19,7 @@ class MainWindow(tk.Tk):
         self.title("ESPушка")
         self.geometry("800x600")
         self.iconbitmap("Pictures\ESP32.ico") #D:\Programming_YuninDD\ITlab_Project\Server\GUI\Pictures\ESP32.ico
-
+        self.resizable(False, False)
 
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand = True)
@@ -49,4 +50,5 @@ class MainWindow(tk.Tk):
 
 if __name__ == "__main__":
     window = MainWindow()
+    
     window.run()

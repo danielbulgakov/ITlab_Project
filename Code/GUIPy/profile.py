@@ -9,24 +9,28 @@ from pyparsing import col
 import serial.tools.list_ports
 import threading
 import numpy as np
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
+
 import menu_pages
+import random
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, 
 NavigationToolbar2Tk)
-from AssetsClass.Heart import HeartGif
+
+import rt_pages
+
 import AssetsClass.ConnectHandler as ConHan
+ch = ConHan.ConnectHandler()
+
+
 from AssetsClass.UsersData import WorkerUsersData
 from AssetsClass.GlobalVariables import user_login
+
 
 MyText = 'Arial 17 bold'
 EntryText = "Arial 14 bold"
 StyleText = "Arial 14 bold"
 
-ch = ConHan.ConnectHandler()
 
 wud = WorkerUsersData() #объект того самого класса для работы с данными
 
@@ -55,7 +59,7 @@ class MainProfilePage(tk.Frame):
         temp = temp.resize((62, 62), Image.ANTIALIAS)
         temp = ImageTk.PhotoImage(temp)
         self.btn_params = tk.Button(self, image=temp, compound=tk.TOP, highlightthickness=0, bd=0, 
-                                    padx=200, text="здоровье", font=StyleText, pady=2, bg="green", activebackground="green", command=lambda: control.show_frame(HealthPage))
+                                    padx=200, text="здоровье", font=StyleText, pady=2, bg="green", activebackground="green", command=lambda: control.show_frame(rt_pages.HealthPage))
         self.btn_params.image=temp
         self.btn_params.grid(row=0, column=1)
 
@@ -138,7 +142,7 @@ class SettingPage(tk.Frame):
             self.drop_bd["state"] = "active"
             self.drop_COM["state"] = "active"
             self.serialData = False
-            ch.enddata(self.serialData)
+            ch.enddata(False)
             ch.setconditionthread(False)
         else:
             self.serialData = True
@@ -155,186 +159,13 @@ class SettingPage(tk.Frame):
             except:
                 pass
 
-            if ch.getconditionthread() is False:
+            if  ch.getconditionthread() is False:
                 print("test is success")
                 ch.createthread()
                 ch.setconditionthread(True)
             else:
                 pass
 
-#Тут должны быть графики пульса, spo2, активность
-class HealthPage(tk.Frame):
-    def __init__(self, parent, control):
-        tk.Frame.__init__(self,parent)
-        
-        self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
-        self.home = self.home.subsample(10,10)
-        self.btn_back = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="home", font=StyleText, command=lambda:[control.show_frame(MainProfilePage)])
-        self.btn_back.grid(row=0, column=0)
-        
-        self.heart = tk.PhotoImage(file="Pictures\heart.png")
-        self.heart = self.heart.subsample(10,10)
-        self.btn_heart = tk.Button(self, image=self.heart, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="BPM", font=StyleText, command=lambda: control.show_frame(HeartBeatPage))
-        self.btn_heart.grid(row=0, column=1)
-        
-        self.spo2 = tk.PhotoImage(file="Pictures\spo2.png")
-        self.spo2 = self.spo2.subsample(10,10)
-        self.btn_spo2 = tk.Button(self, image=self.spo2, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="SPO2", font=StyleText, command=lambda: [ control.show_frame(SPO2BeatPage)])
-        self.btn_spo2.grid(row=0, column=2)
-
-class HeartBeatPage(tk.Frame):
-    def __init__(self, parent, control):
-        tk.Frame.__init__(self,parent)
-        
-        self.heartbeat = ()
-
-        self.after(0, self.getdata, 1000)
-  
-        
-        self.fig = plt.figure(1, figsize=(10, 4), dpi=80)
-        
-        self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
-        self.home = self.home.subsample(10,10)
-        self.btn_home = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage), anchor='nw')
-        self.btn_home.grid(row=0, column=0, sticky='nw')
-        
-        self.back = tk.PhotoImage(file="Pictures\\back-.png")
-        self.back = self.back.subsample(10,10)
-        self.btn_back = tk.Button(self, image=self.back, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="back", font=StyleText, command=lambda: control.show_frame(HealthPage), anchor='nw')
-        self.btn_back.grid(row=0, column=1,  sticky='nw')
-        
-        
-        heart = HeartGif(self, row=0,col=99, width=100, height=100)
-        avg = np.average(self.heartbeat)
-        if (avg != avg): 
-            avg = 0
-        self.after(0, heart.update, min(max(30, 190 - int(avg)), 190-60)  ) 
-        
-        usefuldata = 'asdd'
-        
-        label = tk.Label(self, text=usefuldata, font=MyText)
-        label.grid(row=2, column=0)
-        
-
-    def getdata(self, timespan):
-        
-        self.t = ch.GetPulse() 
-        
-
-        
-        if (len(self.t) != 0) :
-            self.heartbeat = self.t
-        self.fig.clear()
-
-        # print("*************************************")
-        # print(self.heartbeat)
-        # print("*************************************")
-
-        self.plot(self.heartbeat)
-        self.after(timespan, self.getdata, 1000)
-        
-        
-    def plot(self, beats_array) : 
-        plt.figure(1)
-        y = np.array(beats_array)
-        
-        plt.plot( y, color="red")
-        plt.ylim(40,150)
-        
-        ax = plt.gca()
-        ax.axes.xaxis.set_visible(False)
-        
-        # plt.axes().get_xaxis().set_visible(False)
-        # creating the Tkinter canvas
-        # containing the Matplotlib figure
-        canvas = FigureCanvasTkAgg(self.fig, self)  
-        
-        canvas.draw()
-      
-        # placing the canvas on the Tkinter window
-        canvas.get_tk_widget().grid(row=1, column=0, columnspan=100)
-
-class SPO2BeatPage(tk.Frame):
-    
-    def __init__(self, parent, control):
-        tk.Frame.__init__(self,parent)
-        
-
-        self.after(0, self.getdata, 1000)
-
-        
-        self.fig = plt.figure(0, figsize=(10, 4), dpi=80)
-        
-        self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
-        self.home = self.home.subsample(10,10)
-        self.btn_home = tk.Button(self, image=self.home, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="home", font=StyleText, command=lambda: control.show_frame(MainProfilePage), anchor='nw')
-        self.btn_home.grid(row=0, column=0, sticky='nw')
-        
-        self.back = tk.PhotoImage(file="Pictures\\back-.png")
-        self.back = self.back.subsample(10,10)
-        self.btn_back = tk.Button(self, image=self.back, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, text="back", font=StyleText, command=lambda:[ control.show_frame(HealthPage)], anchor='nw')
-        self.btn_back.grid(row=0, column=1,  sticky='nw')
-        self.spo2 = tk.PhotoImage(file="Pictures\spo2.png")
-        self.spo2 = self.spo2.subsample(10,10)
-        self.btn_spo2 = tk.Button(self, image=self.spo2, compound=tk.TOP, highlightthickness=0, bd=0,
-                                 padx=25, font=StyleText, command=lambda: control.show_frame(SPO2BeatPage))
-        self.btn_spo2.grid(row=0, column=99)
-        
-        
-        
-        usefuldata = 'asdd'
-        
-        label = tk.Label(self, text=usefuldata, font=MyText)
-        label.grid(row=2, column=0)
-
-
-
-
-        
-    def getdata(self, timespan):
-
-
-        self.heartbeat = ()
-        self.t = ch.GetSpO2() 
-        
-        # print("######################################")
-        # print(self.t)
-        # print("######################################")
-        
-        if (len(self.t) != 0) :
-            self.heartbeat = self.t
-        self.fig.clear()
-        self.plot(self.heartbeat)
-        self.after(timespan, self.getdata, 1000)
-        
-        
-    def plot(self, beats_array) : 
-        plt.figure(0)
-        y = np.array(beats_array)
-        
-        plt.plot( y, color="blue")
-        plt.ylim(0,100)
-        
-        ax = plt.gca()
-        ax.axes.xaxis.set_visible(False)
-        
-        # plt.axes().get_xaxis().set_visible(False)
-        # creating the Tkinter canvas
-        # containing the Matplotlib figure
-        canvas = FigureCanvasTkAgg(self.fig, self)  
-        
-        canvas.draw()
-      
-        # placing the canvas on the Tkinter window
-        canvas.get_tk_widget().grid(row=1, column=0, columnspan=100)
-        
 class ProfileDataPage(tk.Frame):
 
     def __init__(self, parent, control):

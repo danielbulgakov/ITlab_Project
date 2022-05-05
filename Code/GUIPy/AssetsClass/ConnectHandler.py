@@ -5,12 +5,15 @@ import serial
 import random
 import numpy as np
 
+from AssetsClass.sensorsdata import SensorDataWorker
+
 # Добавить состояние активен не активен для класса, чтобы данные не гернерировались 
 # и не считывались без необдиомсти и не засоряли поток. Иначе ввод данных будет затруднителен (логин в систему)
 
 class ConnectHandler():
 
     def __init__(self):
+        self.sd = SensorDataWorker()
         self.ActiveState = False
         self.threadisrun = False
         self.ax = [] 
@@ -48,8 +51,10 @@ class ConnectHandler():
 
     def readSerial(self):
         self.ActiveState = True
-        #print("thread start")
-        self.serialData
+        print("thread start")
+        #self.serialData
+        if not self.serialData:
+            self.data_destroy()
         while self.serialData:
             #Получается массив байт (несколько массивов байт ибо лучше не придумал как эту хрень сделать)
             data1 = self.ser.read(11)
@@ -87,7 +92,7 @@ class ConnectHandler():
                     # print(check5)
 
                     #мы можем их не удалять и посмотреть что получится)
-                    #self.data_destroy()
+                    self.data_destroy()
                     #заполнение массивов
                     for i in range(0, 10):
                         self.ax.append(check2[i])
@@ -118,8 +123,12 @@ class ConnectHandler():
                             self.time.append(check5[i] * 100 + check5[i + 1])
                             i += 1
                             continue
+                        if i == 3: continue
                         self.time.append(check5[i])
-                       
+                    
+                    self.sd.add_to_np_array(self.ax, self.ay,self.az, self.gx,self.gy, self.gz)
+                    
+
                             
                     
                     
@@ -140,18 +149,24 @@ class ConnectHandler():
                     # print(self.pulse)
                     # print("Кислород:")    
                     # print(self.sp02)
-                    # print("Время:")    
-                    # print(self.time)
+                    print("Время:")    
+                    print(self.time)
 
 
                 except:
                     pass
 
     def GetSpO2(self):
-        return self.sp02
+        temp = self.sp02.copy()
+        self.sp02.clear()
+        # print(temp)
+        return temp
 
     def GetPulse(self):
-        return self.pulse
+        temp = self.pulse.copy()
+        self.pulse.clear()
+        # print(temp)
+        return temp
     
     def GetAx(self):
         return self.ax
@@ -174,23 +189,28 @@ class ConnectHandler():
     def GetTime(self):
         return self.time 
 
+
     def data_destroy(self):
-        self.ax.clear()
-        self.ay.clear()
-        self.az.clear()
-        self.gx.clear()
-        self.gy.clear()
-        self.gz.clear()
-        self.pulse.clear()
-        self.sp02.clear()
-        self.time.clear()
+        self.ax*= 0
+        self.ay*= 0
+        self.az*= 0
+        self.gx*= 0
+        self.gy*= 0
+        self.gz*= 0
+        self.pulse*= 0
+        self.sp02*= 0
+        self.time*= 0
 
 
     def enddata(self, serialData):
+        self.sd.save_to_file()
+        self.data_destroy()
         self.serialData = serialData
 
     def getconditionthread(self):
         return self.threadisrun
 
     def setconditionthread(self, threadcondition):
+        self.sd.save_to_file()
+        self.data_destroy()
         self.threadisrun = threadcondition
