@@ -35,7 +35,7 @@ class MainWindow(tk.Tk):
 
         self.show_frame(WelcomePage)
         
-
+   
     def run(self):
         self.mainloop()
 

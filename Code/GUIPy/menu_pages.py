@@ -2,6 +2,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from tkinter import messagebox
 import profile
+from AssetsClass.GlobalVariables import user_login
 
 
 MyText = 'Arial 17 bold'
@@ -76,13 +77,16 @@ class EntryPage(tk.Frame):
         button_back.place(relx=0.6, rely=0.8, anchor="center")
 
     def check_register_data(self):
+        global user_login
         name = str(self.username.get()).strip()
         password = str(self.password.get()).strip()
 
         if name.isspace() or password.isspace() or ' ' in name or ' ' in password or len(name) == 0 or len(password) == 0:   
             messagebox.showwarning(title='ошибка', message='неверно указаны данные')
         else :
-            if self.find_register_data() :
+            if self.find_register_data():
+                user_login.clear()
+                user_login.append(self.username.get())
                 self.control.show_frame(profile.MainProfilePage)
             else : 
                 messagebox.showwarning(title='ошибка', message='неверно логин или пароль')
