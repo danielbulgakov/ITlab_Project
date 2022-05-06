@@ -5,7 +5,7 @@ import serial
 import random
 import numpy as np
 
-from AssetsClass.sensorsdata import SensorDataWorker
+from AssetsClass.sensorsdata import ArraySensorDataWorker, SensorDataWorker
 
 # Добавить состояние активен не активен для класса, чтобы данные не гернерировались 
 # и не считывались без необдиомсти и не засоряли поток. Иначе ввод данных будет затруднителен (логин в систему)
@@ -14,6 +14,7 @@ class ConnectHandler():
 
     def __init__(self):
         self.sd = SensorDataWorker()
+        self.main_arr = ArraySensorDataWorker()
         self.ActiveState = False
         self.threadisrun = False
         self.ax = [] 
@@ -126,8 +127,11 @@ class ConnectHandler():
                         if i == 3: continue
                         self.time.append(check5[i])
                     
-                    self.sd.add_to_np_array(self.ax, self.ay,self.az, self.gx,self.gy, self.gz)
-                    
+                    if self.sd.pack_is_ready() is False:
+                        self.sd.add_to_np_array(self.ax, self.ay, self.az, self.gx, self.gy, self.gz)
+                    else:
+                        self.main_arr.add_pack(self.sd.get_array())
+                        self.sd.clear_np_arr()
 
                             
                     
@@ -203,7 +207,7 @@ class ConnectHandler():
 
 
     def enddata(self, serialData):
-        self.sd.save_to_file()
+        self.main_arr.save_file()
         self.data_destroy()
         self.serialData = serialData
 
@@ -211,6 +215,5 @@ class ConnectHandler():
         return self.threadisrun
 
     def setconditionthread(self, threadcondition):
-        self.sd.save_to_file()
         self.data_destroy()
         self.threadisrun = threadcondition
