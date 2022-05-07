@@ -76,7 +76,17 @@ class HeartBeatPage(tk.Frame):
         
         label = tk.Label(self, text=usefuldata, font=MyText)
         label.grid(row=2, column=0)
-        
+
+    def find_nearest(self,array, value):
+        array = np.asarray(array)
+        if (array.max() == 0): return 0;
+        idx = (np.abs(array - value)).argmin()
+        if array[idx] == 0 or array[idx] > 180: return 80
+        array = array[array!=0 ]
+        array = array[array < 200]
+        array = array[array > 20]
+        return array.mean() - 20;
+        return array[idx]
 
     def getdata(self, timespan = 1000):
         self.t = profile.ch.GetPulse() 
@@ -84,11 +94,12 @@ class HeartBeatPage(tk.Frame):
         # print(self.t)
         # print("GGGGGGGGGGGGGGEEEEEEEEEEEEEEEETDDDDDDDDDDDAAAAAAAAAAATTTTTTTTTTAAAAAAAAAAA") 
         
-        avgk = np.average(self.t)
+
 
         temp = profile.ch.GetTime()
 
         if (len(self.t) != 0) :
+            avgk = self.find_nearest(self.t, 80)
             self.heartbeat.append(int(avgk))
             self.time.append(datetime(year=temp[2], month=temp[1], day=temp[0], hour=temp[3], minute=temp[4], second=temp[5]))
 
@@ -164,6 +175,12 @@ class SPO2BeatPage(tk.Frame):
 
 
 
+    def find_nearest(self,array, value):
+        array = np.asarray(array)
+        if (array.max() == -1): return 0;
+        idx = (np.abs(array - value)).argmin()
+        if array[idx] <= 90 : return 95
+        return array[idx]
 
         
     def getdata(self, timespan):
@@ -172,12 +189,13 @@ class SPO2BeatPage(tk.Frame):
         # print(self.t)
         # print("GGGGGGGGGGGGGGEEEEEEEEEEEEEEEETDDDDDDDDDDDAAAAAAAAAAATTTTTTTTTTAAAAAAAAAAA") 
         
-        avgk = np.average(self.t)
+
 
         temp = profile.ch.GetTime()
 
 
         if (len(self.t) != 0) :
+            avgk = self.find_nearest(self.t, 95)
             self.heartbeat.append(int(avgk))
             self.time.append(datetime(year=temp[2], month=temp[1], day=temp[0], hour=temp[3], minute=temp[4], second=temp[5]))
 

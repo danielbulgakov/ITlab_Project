@@ -14,7 +14,7 @@ class SensorDataWorker():
         return self.main_arr
 
     def pack_is_ready(self):
-        if self.main_arr.shape == (6, 1000):
+        if self.main_arr.shape == (6, 20):
             print("Ywwww")
             return True
         else:
@@ -39,19 +39,26 @@ class SensorDataWorker():
         np.save('Logs/sensors_data', self.main_arr)
 
     def load_sensor_data(self):
-        self.main_arr = np.empty(shape=(6,1000))
+        self.main_arr = np.empty(shape=(6,20))
         self.main_arr = np.load('Logs/sensors_data.npy', allow_pickle=True ) 
         # print(np.array([self.main_arr, self.main_arr]).shape)
 
 class ArraySensorDataWorker():
 
     def __init__(self):
-        self.main_arr = np.empty(shape=[0, 6, 1000])
+        self.main_arr = np.empty(shape=[0, 6, 20])
         print(self.main_arr.shape)
         print(self.main_arr)
 
     def add_pack(self, data):
         self.main_arr = np.append(self.main_arr, [data], axis=0)
+        print(self.main_arr.shape)
+        print(self.main_arr.shape)
+        print(self.main_arr.shape)
+        print(self.main_arr.shape)
+        print(self.main_arr.shape)
+        print(self.main_arr.shape)
+        print(self.main_arr.shape)
         print(self.main_arr.shape)
         print("Умпешно добавлено")
 
@@ -59,7 +66,7 @@ class ArraySensorDataWorker():
         return self.main_arr 
     
     def save_file(self):
-        np.save('Logs/sensors_data', self.main_arr)
+        np.save('Logs/active', self.main_arr)
 
     def load_sensor_data(self):
         self.main_arr = np.load('Logs/sensors_data.npy')
@@ -87,11 +94,7 @@ class ArraySensorDataWorker():
 # print(s.get_array().shape)
 
 
-d = ArraySensorDataWorker()
-d.load_sensor_data()
-# d.add_pack(s.get_array())
-# d.add_pack(s.get_array())
-print(d.get_array())
+
 
 # d.add_pack(s.get_array())
 # d.add_pack(s.get_array())

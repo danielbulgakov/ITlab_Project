@@ -36,6 +36,7 @@ class ConnectHandler():
         self.baud = baudrate
         self.serialData = serialData
         self.ser = serial.Serial(self.port, self.baud)
+
         
     
     def createthread(self):
@@ -68,16 +69,16 @@ class ConnectHandler():
                 try:
                     #Перенос этих всяких данных в нормальные форматы
                     check1 = strct.unpack('11c', data1)
-                    # print(check1)
+                    print(check1)
 
                     check6 = strct.unpack('10c', data6)
                     # print(check6)
                     # print("##########################")
                     
                     
-                    #if (check1 != (b'<', b'S', b't', b'a', b'r', b't', b'_', b'P', b'a', b'c', b'k') or 
-                    #check6 != (b'E', b'n', b'd', b'_', b'P', b'a', b'c', b'k', b'>', b'\x00')) :
-                        #continue
+                    if (check1 != (b'<', b'S', b't', b'a', b'r', b't', b'_', b'P', b'a', b'c', b'k') or
+                    check6 != (b'E', b'n', b'd', b'_', b'P', b'a', b'c', b'k', b'>', b'\x00')) :
+                        continue
                     
                     #показания гиро и акса
                     check2 = strct.unpack('60f', data2)
@@ -137,22 +138,22 @@ class ConnectHandler():
                     
                     
 
-                    # print("АксX:")    
-                    # print(self.ax)
-                    # print("АксY:")    
-                    # print(self.ay)
-                    # print("АксZ:")    
-                    # print(self.az)
-                    # print("ГироX:")    
-                    # print(self.gx)
-                    # print("ГироY:")    
-                    # print(self.gy)
-                    # print("ГироZ:")    
-                    # print(self.gz)
-                    # print("Пульс:")    
-                    # print(self.pulse)
-                    # print("Кислород:")    
-                    # print(self.sp02)
+                    print("АксX:")
+                    print(self.ax)
+                    print("АксY:")
+                    print(self.ay)
+                    print("АксZ:")
+                    print(self.az)
+                    print("ГироX:")
+                    print(self.gx)
+                    print("ГироY:")
+                    print(self.gy)
+                    print("ГироZ:")
+                    print(self.gz)
+                    print("Пульс:")
+                    print(self.pulse)
+                    print("Кислород:")
+                    print(self.sp02)
                     print("Время:")    
                     print(self.time)
 
