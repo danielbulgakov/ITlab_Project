@@ -26,9 +26,10 @@ class HeartGif:
         self.label.configure(image= (self.frames[self.ind]))
         self.label.update()
 
-        self.root.after(speed, self.update,  min(max(30, 170 - int(np.average(ProfilePages.ch.GetPulse()))), 170-60))
-        
-    
+        temp = np.average(ProfilePages.ch.GetPulse())
+        if (temp != temp) : 
+            return int(0)
+        self.root.after(speed, self.update,  min(max(30, 170 - int(temp))), 170-60)
         
     # How to use
 # heart = HeartGif(root, relx=0.3, rely=0.3, width=300, height=300)

@@ -51,8 +51,10 @@ class ConnectHandler():
         if not self.serialData:
             self.data_destroy()
         while self.serialData:
+            print("tooop")
             #Получается массив байт (несколько массивов байт ибо лучше не придумал как эту хрень сделать)
             data1 = self.ser.read(11)
+            #print("tooop1")
             data2 = self.ser.read(240)
             data3 = self.ser.read(10)
             data4 = self.ser.read(40)
