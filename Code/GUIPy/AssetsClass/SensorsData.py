@@ -61,7 +61,7 @@ class ArraySensorDataWorker():
         return self.main_arr 
     
     def save_file(self):
-        np.save('Logs/active', self.main_arr)
+        np.save('Logs/sensors_data', self.main_arr)
 
     def load_sensor_data(self):
         self.main_arr = np.load('Logs/sensors_data.npy')
