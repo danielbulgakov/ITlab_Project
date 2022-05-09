@@ -18,9 +18,11 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
+import AssetsClass.GlobalVariables as gb
+
 class ActivePrediction:
     def __init__(self):
-        self.filename = 'modelwork.sav'
+        self.filename = 'Logs/modelwork.sav'
         pass
     def create_model(self, active_path, normal_path, lazy_path):
         
@@ -50,24 +52,41 @@ class ActivePrediction:
         return  self.model.predict(array)
     
     def create_predict_value(self, value):
-        value = ap.features(value)
+        value = self.ap.features(value)
+        print(value.shape)
         return (value[0].reshape(1, -1))
         
         
+
+class PredictHandler:
+    def __init__(self):
+        self.ap = ActivePrediction()
+        self.ap.load_model()
+        pass
     
+    def next_predict(self):
+        if (gb.sd.pack_is_ready()):
+            return self.return_value(self.ap.predict(gb.sd.get_array()))
+        return self.return_value([-1])
+    
+    def return_value(self, listv ):
+        if (listv[0] == 0) : return 'Малая активность'
+        elif (listv[0] == 1) : return 'Средняя активность'
+        elif (listv[0] == 2) : return 'Высокая активность'
+        else : return 'Данные отсуствуют'
+        
+        
+
+    
+
     
 
 
-def features(X):
-        return np.concatenate((X.mean(axis = 2), X.std(axis = 2), X.min(axis = 2), X.max(axis = 2)), axis=1)
-    
+# ap = ActivePrediction()
+# # ap.create_model('Logs/active.npy','Logs/normal.npy','Logs/lazy.npy')
+# ap.load_model()
 
+# Check = np.load(f'Logs/active.npy', 'r')
+# Check = ap.create_predict_value(Check)
 
-ap = ActivePrediction()
-ap.create_model('Logs/active.npy','Logs/normal.npy','Logs/lazy.npy')
-ap.load_model()
-
-Check = np.load(f'Logs/active.npy', 'r')
-Check = ap.create_predict_value(Check)
-
-print(ap.predict(Check))
+# print(ap.predict(Check))
