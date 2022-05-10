@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from AssetsClass.Heart import HeartGif
 from datetime import datetime
+import AssetsClass.GlobalVariables as gb
 
 import random
 
@@ -72,7 +73,8 @@ class HeartBeatPage(tk.Frame):
         
         self.label = tk.Label(self, bg='white', text=self.usefuldata, font=MyText)
         self.label.grid(row=2, column=0, columnspan=3)
-        self.label1 = tk.Label(self, bg='white', text='Активность : средняя', font=MyText)
+        
+        self.label1 = tk.Label(self, bg='white', text='Активность : нету данных', font=MyText)
         self.label1.grid(row=3, column=0, columnspan=3)
 
     def filter(self,array, value):
@@ -87,7 +89,7 @@ class HeartBeatPage(tk.Frame):
         return array[idx]
 
     def getdata(self, timespan = 1000):
-       
+
         self.t = ProfilePages.ch.GetPulse() 
  
         temp = ProfilePages.ch.GetTime()
@@ -95,9 +97,15 @@ class HeartBeatPage(tk.Frame):
         self.avg = np.average(self.heartbeat)
         if (self.avg != self.avg): 
             self.avg = 0
+            
         self.usefuldata = 'Среднее сердцебиение : ' + str(int(self.avg))
         self.label.configure(text=self.usefuldata)
         self.label.update()
+        
+        value = gb.ph.next_predict()
+        if (value == "NoneType") : str(' ')
+        self.label1.configure(text='Активность : '  + value)
+        self.label1.update()
         
         if (len(self.t) != 0) :
             # avgk = self.filter(self.t, 80)
