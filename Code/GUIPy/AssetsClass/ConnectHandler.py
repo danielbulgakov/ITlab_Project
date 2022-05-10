@@ -61,11 +61,10 @@ class ConnectHandler():
                 try:
                     #Перенос этих всяких данных в нормальные форматы
                     check1 = strct.unpack('11c', data1)
-                    print(check1)
+
 
                     check6 = strct.unpack('10c', data6)
-                    # print(check6)
-                    # print("##########################")
+
                     
                     
                     if (check1 != (b'<', b'S', b't', b'a', b'r', b't', b'_', b'P', b'a', b'c', b'k') or
@@ -127,27 +126,7 @@ class ConnectHandler():
                         self.sd.clear_np_arr()
 
                             
-                    
-                    
-
-                    print("АксX:")
-                    print(self.ax)
-                    print("АксY:")
-                    print(self.ay)
-                    print("АксZ:")
-                    print(self.az)
-                    print("ГироX:")
-                    print(self.gx)
-                    print("ГироY:")
-                    print(self.gy)
-                    print("ГироZ:")
-                    print(self.gz)
-                    print("Пульс:")
-                    print(self.pulse)
-                    print("Кислород:")
-                    print(self.sp02)
-                    print("Время:")    
-                    print(self.time)
+                
 
 
                 except:
@@ -156,15 +135,11 @@ class ConnectHandler():
     def GetSpO2(self):
         temp = self.sp02.copy()
         self.sp02.clear()
-        temp = list(float(random.choice(range(92, 100))) for _ in range(10))
-        # print(temp)
         return temp
 
     def GetPulse(self):
         temp = self.pulse.copy()
         self.pulse.clear()
-        temp = list(float(random.choice(range(80, 110))) for _ in range(10))
-        # print(temp)
         return temp
     
     def GetAx(self):
