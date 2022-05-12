@@ -16,6 +16,9 @@ class HeartGif:
         self.label =  Label(root, bg='white')
         self.label.grid(row=self.row, column=self.col, sticky='ne')
         self.ind = 0
+        self.id = 0
+
+
         
     
     def update(self, speed):
@@ -26,9 +29,16 @@ class HeartGif:
         self.label.configure(image= (self.frames[self.ind]))
         self.label.update()
 
-        self.root.after(speed, self.update,  min(max(30, 170 - int(np.average(ProfilePages.ch.GetPulse()))), 170-60))
-        
-    
+        speedval = 0
+        if (len(ProfilePages.ch.GetPulse()) != 0) :
+            speedval = np.average(ProfilePages.ch.GetPulse())
+            if (speedval != speedval):
+                speedval = 0
+
+
+
+
+
         
     # How to use
 # heart = HeartGif(root, relx=0.3, rely=0.3, width=300, height=300)

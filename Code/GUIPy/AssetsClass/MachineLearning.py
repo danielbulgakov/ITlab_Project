@@ -17,6 +17,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+import os
 
 import AssetsClass.GlobalVariables as gb
 
@@ -44,6 +45,11 @@ class ActivePrediction:
         return np.concatenate((X.mean(axis = 2), X.std(axis = 2), X.min(axis = 2), X.max(axis = 2)), axis=1)
     
     def load_model(self):
+        if (not os.path.exists(self.filename)) :
+            self.create_model('Logs/active.npy', 'Logs/normal.npy', 'Logs/lazy.npy')
+
+        file = open(self.filename, 'rb')
+
         self.model = pickle.load(open(self.filename, 'rb'))
         
     def predict(self, array):

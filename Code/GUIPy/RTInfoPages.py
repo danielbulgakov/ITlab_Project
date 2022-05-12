@@ -65,8 +65,8 @@ class HeartBeatPage(tk.Frame):
         self.btn_back.grid(row=0, column=1,  sticky='nw')
         
     
-        heart = HeartGif(self, row=0,col=99, width=100, height=100)
-        self.after(0, heart.update, min(max(30, 190 - int(self.avg)), 190-60)  ) 
+        self.heart = HeartGif(self, row=0,col=99, width=100, height=100)
+        self.after(0, self.heart.update, min(max(30, 190 - int(self.avg)), 190-60))
         self.after(0, self.getdata, 1000)
         
         self.usefuldata = 'Среднее сердцебиение : ' + str(self.avg)
@@ -77,24 +77,27 @@ class HeartBeatPage(tk.Frame):
         self.label1 = tk.Label(self, bg='white', text='Активность : нету данных', font=MyText)
         self.label1.grid(row=3, column=0, columnspan=3)
 
-    def filter(self,array, value):
+    def filter(self, array, value):
+
         array = np.asarray(array)
-        if (array.max() == 0): return 0;
+        if (array.max() == 0): return 0
         idx = (np.abs(array - value)).argmin()
         if array[idx] == 0 or array[idx] > 180: return 80
         array = array[array!=0 ]
         array = array[array < 200]
         array = array[array > 20]
+        if (len(array) == 0) : return 0
         return array.mean() - 20;
-        return array[idx]
+
 
     def getdata(self, timespan = 1000):
-
+        global ph
         self.t = ProfilePages.ch.GetPulse() 
  
         temp = ProfilePages.ch.GetTime()
-        
-        self.avg = np.average(self.heartbeat)
+
+        if (len(self.heartbeat) == 0):
+            self.avg = np.average(self.heartbeat)
         if (self.avg != self.avg): 
             self.avg = 0
             
@@ -122,7 +125,10 @@ class HeartBeatPage(tk.Frame):
 
         if (len(self.t) != 0):
             self.plot(self.heartbeat)
+
+
         self.after(timespan, self.getdata, 1000)
+
         
         
     def plot(self, beats_array) : 
@@ -131,7 +137,7 @@ class HeartBeatPage(tk.Frame):
         y = np.array(beats_array)
         
         plt.plot(x, y, color="red")
-        plt.ylim(40,200)
+        plt.ylim(40, 200)
         
         # plt.axes().get_xaxis().set_visible(False)
         # creating the Tkinter canvas
@@ -139,6 +145,9 @@ class HeartBeatPage(tk.Frame):
         
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=1, column=0, columnspan=100)
+
+
+
 
 class SPO2BeatPage(tk.Frame):
     
@@ -148,7 +157,7 @@ class SPO2BeatPage(tk.Frame):
         self.heartbeat = []
         self.time = []
         self.avg = 0
-        self.after(0, self.getdata, 1000)
+        self.id = self.after(0, self.getdata, 1000)
 
         
         self.fig = plt.figure(0, figsize=(10, 4), dpi=80)
@@ -170,8 +179,9 @@ class SPO2BeatPage(tk.Frame):
         self.btn_spo2 = tk.Button(self, bg='white', image=self.spo2, compound=tk.TOP, highlightthickness=0, bd=0,
                                  padx=25, font=StyleText, command=lambda: control.show_frame(SPO2BeatPage))
         self.btn_spo2.grid(row=0, column=99)
-        
-        self.avg = np.average(self.heartbeat)
+
+        if (len(self.heartbeat) == 0):
+            self.avg = np.average(self.heartbeat)
         if (self.avg != self.avg) : self.avg = 0
         
         self.usefuldata = 'Средняя оксигенация : ' + str(self.avg)
@@ -183,6 +193,7 @@ class SPO2BeatPage(tk.Frame):
 
 
     def filter(self,array, value):
+        if (len(array) == 0) : return 0
         array = np.asarray(array)
         if (array.max() == -1): return 0;
         idx = (np.abs(array - value)).argmin()
@@ -194,8 +205,9 @@ class SPO2BeatPage(tk.Frame):
       
         self.t = ProfilePages.ch.GetSpO2() 
         temp = ProfilePages.ch.GetTime()
-        
-        self.avg = np.average(self.heartbeat)
+
+        if (len(self.heartbeat) == 0):
+            self.avg = np.average(self.heartbeat)
         if (self.avg != self.avg): 
             self.avg = 0
         self.usefuldata = 'Средняя оксигенация : ' + str('%.1f' % self.avg)
@@ -222,7 +234,10 @@ class SPO2BeatPage(tk.Frame):
 
         if (len(self.t) != 0):
             self.plot(self.heartbeat)
+
+
         self.after(timespan, self.getdata, 1000)
+
         
         
     def plot(self, beats_array) : 
@@ -241,3 +256,4 @@ class SPO2BeatPage(tk.Frame):
       
         # placing the canvas on the Tkinter window
         self.canvas.get_tk_widget().grid(row=1, column=0, columnspan=100)
+

@@ -5,6 +5,9 @@ from MenuPages import WelcomePage, StartPage, EntryPage, RegisterPage
 from ProfilePages import MainProfilePage, SettingPage, ProfileDataPage
 from RTInfoPages import  SPO2BeatPage, HeartBeatPage, HealthPage
 
+import AssetsClass.GlobalVariables as gb
+import AssetsClass.Heart as heart
+
         
 
 class MainWindow(tk.Tk):
@@ -16,11 +19,11 @@ class MainWindow(tk.Tk):
         self.iconbitmap("Pictures\ESP32.ico") #D:\Programming_YuninDD\ITlab_Project\Server\GUI\Pictures\ESP32.ico
         self.resizable(False, False)
 
+
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand = True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-
         
         self.frames = {}
         for F in (WelcomePage, StartPage, EntryPage, RegisterPage, MainProfilePage, SettingPage, ProfileDataPage, HealthPage, HeartBeatPage, SPO2BeatPage):
@@ -38,6 +41,15 @@ class MainWindow(tk.Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+
+
+
+
+
+
+
+
+
 
 
 
