@@ -2,6 +2,7 @@ from asyncio.windows_events import NULL
 from turtle import shape
 import numpy as np
 
+
 class SensorDataWorker():
 
     def __init__(self):
@@ -39,6 +40,7 @@ class SensorDataWorker():
 
 class ArraySensorDataWorker():
 
+
     def __init__(self):
         self.main_arr = np.empty(shape=[0, 6, 20])
         print(self.main_arr.shape)
@@ -66,8 +68,9 @@ class ArraySensorDataWorker():
         print(self.main_arr[-1].shape)
         return self.main_arr[-1]
 
-    def save_file(self):
-        np.save('Logs/data', self.main_arr)
+    def save_file(self, name):
+        str_1 = "Logs/" + name
+        np.save(str_1, self.main_arr)
 
     def load_sensor_data(self):
         self.main_arr = np.load('Logs/sensors_data.npy')

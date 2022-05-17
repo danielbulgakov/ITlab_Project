@@ -176,7 +176,7 @@ class ConnectHandler():
 
 
     def enddata(self, serialData):
-        gb.asd.save_file()
+        gb.asd.save_file(gb.user_login[0])
         self.data_destroy()
         self.serialData = serialData
 

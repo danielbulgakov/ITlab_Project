@@ -100,7 +100,7 @@ class HeartBeatPage(tk.Frame):
  
         temp = ProfilePages.ch.GetTime()
 
-        if (len(self.heartbeat) != 0):
+        if (list(filter(lambda num: num != 0, self.heartbeat)) != 0):
             self.avg = np.average(list(filter(lambda num: num != 0, self.heartbeat)))
         if (self.avg != self.avg): 
             self.avg = 0
@@ -214,7 +214,7 @@ class SPO2BeatPage(tk.Frame):
         self.t = ProfilePages.ch.GetSpO2() 
         temp = ProfilePages.ch.GetTime()
 
-        if (len(self.heartbeat) != 0):
+        if (list(filter(lambda num: num != 0, self.heartbeat)) != 0):
             self.avg = np.average(list(filter(lambda num: num != 0, self.heartbeat)))
         if (self.avg != self.avg): 
             self.avg = 0
