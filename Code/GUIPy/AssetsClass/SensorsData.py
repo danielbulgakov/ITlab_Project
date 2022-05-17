@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from turtle import shape
 import numpy as np
 
@@ -12,10 +13,8 @@ class SensorDataWorker():
 
     def pack_is_ready(self):
         if self.main_arr.shape == (6, 20):
-            print("Ywwww")
             return True
         else:
-            print("Nooooo")
             return False
 
     def add_to_np_array(self, ax, ay, az, gx, gy, gz):
@@ -60,10 +59,19 @@ class ArraySensorDataWorker():
     def get_array(self):
         return self.main_arr 
     
+    def get_last_array(self):
+        print(len(self.main_arr))
+        if len(self.main_arr) == 0:
+            return np.empty(shape=[0, 6, 20])
+        print(self.main_arr[-1].shape)
+        return self.main_arr[-1]
+
     def save_file(self):
-        np.save('Logs/active', self.main_arr)
+        np.save('Logs/data', self.main_arr)
 
     def load_sensor_data(self):
         self.main_arr = np.load('Logs/sensors_data.npy')
         print(self.main_arr.shape)
+
+
   

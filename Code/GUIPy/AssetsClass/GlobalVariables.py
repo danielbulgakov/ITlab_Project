@@ -1,6 +1,8 @@
-import AssetsClass.SensorsData as sd
+import AssetsClass.SensorsData as sensdata
 import AssetsClass.MachineLearning as ml
+
 user_login = [] #глобальная пременная, чтобы считать логин
-sd = sd.SensorDataWorker()
+sd = sensdata.SensorDataWorker()
+asd = sensdata.ArraySensorDataWorker()
 ph = ml.PredictHandler()
 

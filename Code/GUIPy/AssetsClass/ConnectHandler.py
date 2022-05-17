@@ -4,14 +4,13 @@ import struct as strct
 import serial
 import random
 import numpy as np
-
-from AssetsClass.SensorsData import ArraySensorDataWorker, SensorDataWorker
+import AssetsClass.GlobalVariables as gb
 
 class ConnectHandler():
 
     def __init__(self):
-        self.sd = SensorDataWorker()
-        self.main_arr = ArraySensorDataWorker()
+        #self.sd = SensorDataWorker()
+        #self.main_arr = ArraySensorDataWorker()
         self.ActiveState = False
         self.threadisrun = False
         self.ax = [] 
@@ -119,11 +118,11 @@ class ConnectHandler():
                         if i == 3: continue
                         self.time.append(check5[i])
                     
-                    if self.sd.pack_is_ready() is False:
-                        self.sd.add_to_np_array(self.ax, self.ay, self.az, self.gx, self.gy, self.gz)
+                    if gb.sd.pack_is_ready() is False:
+                        gb.sd.add_to_np_array(self.ax, self.ay, self.az, self.gx, self.gy, self.gz)
                     else:
-                        self.main_arr.add_pack(self.sd.get_array())
-                        self.sd.clear_np_arr()
+                        gb.asd.add_pack(gb.sd.get_array())
+                        gb.sd.clear_np_arr()
 
                             
                 
@@ -177,7 +176,7 @@ class ConnectHandler():
 
 
     def enddata(self, serialData):
-        self.main_arr.save_file()
+        gb.asd.save_file()
         self.data_destroy()
         self.serialData = serialData
 

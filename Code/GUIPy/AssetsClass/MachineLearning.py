@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 import numpy as np
 import matplotlib.pyplot as plt
 from IPython.display import clear_output
@@ -34,6 +35,7 @@ class ActivePrediction:
         Rest = np.load(lazy_path, 'r')
         Y_Rest = np.zeros(len(Rest))
         
+        print(Active.shape, SoSoActive.shape, Rest.shape)
         X = np.concatenate(list(map(self.features, [Active, SoSoActive, Rest])), axis=0)
         Y = np.array(np.concatenate((Y_Active, Y_SoSoActive, Y_Rest), axis=0), dtype = int)
         X_train, X_test, Y_train, Y_test =  ms.train_test_split(X, Y, random_state=42, train_size=0.7, shuffle=True)
@@ -53,14 +55,15 @@ class ActivePrediction:
         self.model = pickle.load(open(self.filename, 'rb'))
         
     def predict(self, array):
+        print(array.shape)
         if (self.model != self.model):
             self.load_model()
         return  self.model.predict(array)
     
     def create_predict_value(self, value):
-        value = self.ap.features(value)
         print(value.shape)
-        return (value[0].reshape(1, -1))
+        value = self.features(value)
+        return (value[-1].reshape(1, -1))
         
         
 
@@ -71,8 +74,8 @@ class PredictHandler:
         pass
     
     def next_predict(self):
-        if (gb.sd.pack_is_ready()):
-            return self.return_value(self.ap.predict(gb.sd.get_array()))
+        if (gb.asd.get_array().size != 0):
+            return self.return_value(self.ap.predict(self.ap.create_predict_value(gb.asd.get_array())))
         return self.return_value([-1])
     
     def return_value(self, listv ):
@@ -89,10 +92,11 @@ class PredictHandler:
 
 
 # ap = ActivePrediction()
-# # ap.create_model('Logs/active.npy','Logs/normal.npy','Logs/lazy.npy')
+# ap.create_model('Logs/active.npy','Logs/normal.npy','Logs/lazy.npy')
 # ap.load_model()
 
-# Check = np.load(f'Logs/active.npy', 'r')
+# Check = np.load(f'Logs/data.npy', 'r')
+# print("asdsad", Check[0].shape)
 # Check = ap.create_predict_value(Check)
 
 # print(ap.predict(Check))

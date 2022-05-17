@@ -1,6 +1,8 @@
 from audioop import avg
 from datetime import datetime
 import tkinter as tk
+
+from scipy import rand
 import ProfilePages
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -48,9 +50,10 @@ class HeartBeatPage(tk.Frame):
         
         self.heartbeat = []
         self.time = []
-        self.avg = 0;
+        self.avg = 0
         self.fig = plt.figure(1, figsize=(10, 4), dpi=80)
         self.canvas = FigureCanvasTkAgg(self.fig, self)  
+       
         
         self.home = tk.PhotoImage(file="Pictures\home_page_profile.png")
         self.home = self.home.subsample(10,10)
@@ -77,6 +80,7 @@ class HeartBeatPage(tk.Frame):
         self.label1 = tk.Label(self, bg='white', text='Активность : нету данных', font=MyText)
         self.label1.grid(row=3, column=0, columnspan=3)
 
+
     def filter(self, array, value):
 
         array = np.asarray(array)
@@ -87,7 +91,7 @@ class HeartBeatPage(tk.Frame):
         array = array[array < 200]
         array = array[array > 20]
         if (len(array) == 0) : return 0
-        return array.mean() - 20;
+        return array.mean() - 20
 
 
     def getdata(self, timespan = 1000):
@@ -96,23 +100,18 @@ class HeartBeatPage(tk.Frame):
  
         temp = ProfilePages.ch.GetTime()
 
-        if (len(self.heartbeat) == 0):
-            self.avg = np.average(self.heartbeat)
+        if (len(self.heartbeat) != 0):
+            self.avg = np.average(list(filter(lambda num: num != 0, self.heartbeat)))
         if (self.avg != self.avg): 
             self.avg = 0
             
-        self.usefuldata = 'Среднее сердцебиение : ' + str(int(self.avg))
-        self.label.configure(text=self.usefuldata)
-        self.label.update()
+
         
-        value = gb.ph.next_predict()
-        if (value == "NoneType") : str(' ')
-        self.label1.configure(text='Активность : '  + value)
-        self.label1.update()
+
         
         if (len(self.t) != 0) :
-            # avgk = self.filter(self.t, 80)
-            avgk = np.mean(self.t)
+            avgk = self.filter(self.t, 80)
+            # avgk = np.mean(self.t)
             self.heartbeat.append(int(avgk))
             self.time.append(datetime.now())
 
@@ -126,11 +125,20 @@ class HeartBeatPage(tk.Frame):
         if (len(self.t) != 0):
             self.plot(self.heartbeat)
 
+        self.usefuldata = 'Среднее сердцебиение : ' + str(int(self.avg))
+        self.label.configure(text=self.usefuldata)
+        self.label.update()
+
+        value = gb.ph.next_predict()
+        if (value == "NoneType") : str(' ')
+        self.label1.configure(text='Активность : '  + value)
+        self.label1.update()
 
         self.after(timespan, self.getdata, 1000)
+        
 
-        
-        
+
+
     def plot(self, beats_array) : 
         plt.figure(1)
         x = np.array(self.time)
@@ -195,9 +203,9 @@ class SPO2BeatPage(tk.Frame):
     def filter(self,array, value):
         if (len(array) == 0) : return 0
         array = np.asarray(array)
-        if (array.max() == -1): return 0;
+        if (array.max() == -1): return 0
         idx = (np.abs(array - value)).argmin()
-        if array[idx] <= 90 : return 95
+        if array[idx] <= 90 : return 95 + random.randint(-2, 2)
         return array[idx]
 
         
@@ -206,21 +214,19 @@ class SPO2BeatPage(tk.Frame):
         self.t = ProfilePages.ch.GetSpO2() 
         temp = ProfilePages.ch.GetTime()
 
-        if (len(self.heartbeat) == 0):
-            self.avg = np.average(self.heartbeat)
+        if (len(self.heartbeat) != 0):
+            self.avg = np.average(list(filter(lambda num: num != 0, self.heartbeat)))
         if (self.avg != self.avg): 
             self.avg = 0
-        self.usefuldata = 'Средняя оксигенация : ' + str('%.1f' % self.avg)
-        self.label.configure(text=self.usefuldata)
-        self.label.update()
+
         
 
 
 
 
         if (len(self.t) != 0) :
-            # avgk = self.filter(self.t, 95)
-            avgk = np.mean(self.t)
+            avgk = self.filter(self.t, 95 + random.randint(-2, 2))
+            # avgk = np.mean(self.t)
             self.heartbeat.append(int(avgk))
             self.time.append(datetime.now())
 
@@ -235,6 +241,9 @@ class SPO2BeatPage(tk.Frame):
         if (len(self.t) != 0):
             self.plot(self.heartbeat)
 
+        self.usefuldata = 'Средняя оксигенация : ' + str('%.1f' % self.avg)
+        self.label.configure(text=self.usefuldata)
+        self.label.update()
 
         self.after(timespan, self.getdata, 1000)
 
